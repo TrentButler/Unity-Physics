@@ -2,23 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AABBBehaviour : MonoBehaviour {
-    
-    public AABB collider1 = new AABB();
-    public AABB collider2 = new AABB();
-    public AABB collider3 = new AABB();
-    public AABB collider4 = new AABB();
+public class AABBBehaviour : MonoBehaviour
+{
+
+    public aaBB collider1;
+    public aaBB collider2;
+    public aaBB collider3;
+    public aaBB collider4;
 
     public Utilities util = new Utilities();
 
-    private List<AABB> objects = new List<AABB>();
-    public List<AABB> colliderPairs = new List<AABB>();
+    private List<aaBB> objects = new List<aaBB>();
+    public List<string> currentOBJSColliding = new List<string>();
+    public List<string> colliderXPairs = new List<string>();
+    public List<string> colliderYPairs = new List<string>();
 
-    public bool Collision = false;
-    //public Vector2 Collider1BOXMAX = Vector2.zero;
-    //public Vector2 Collider1BOXMIN = Vector2.zero;
-    //public Vector2 Collider2BOXMAX = Vector2.zero;
-    //public Vector2 Collider2BOXMIN = Vector2.zero;
+    public bool CollisionAB = false;
+    public bool CollisionCD = false;
 
     private Transform colGO1;
     private Transform colGO2;
@@ -29,9 +29,11 @@ public class AABBBehaviour : MonoBehaviour {
     private Vector2 col2Pos;
     private Vector2 col3Pos;
     private Vector2 col4Pos;
-    
-    void Start ()
+
+    void Start()
     {
+
+        #region GameObjectTOAABB
         colGO1 = GameObject.FindGameObjectWithTag("col1").transform;
         colGO2 = GameObject.FindGameObjectWithTag("col2").transform;
         colGO3 = GameObject.FindGameObjectWithTag("col3").transform;
@@ -41,42 +43,60 @@ public class AABBBehaviour : MonoBehaviour {
         col2Pos = new Vector2(colGO2.transform.position.x, colGO2.transform.position.y);
         col3Pos = new Vector2(colGO3.transform.position.x, colGO3.transform.position.y);
         col4Pos = new Vector2(colGO4.transform.position.x, colGO4.transform.position.y);
+        #endregion
 
-        collider1.Init("A", col1Pos, 1);
-        collider2.Init("B", col2Pos, 1);
-        collider3.Init("C", col3Pos, 1);
-        collider4.Init("D", col4Pos, 1);
-        
+        collider1 = ScriptableObject.CreateInstance<aaBB>() as aaBB;
+        collider2 = ScriptableObject.CreateInstance<aaBB>() as aaBB;
+        collider3 = ScriptableObject.CreateInstance<aaBB>() as aaBB;
+        collider4 = ScriptableObject.CreateInstance<aaBB>() as aaBB;
+
+        collider1._Init("A", col1Pos, 1);
+        collider2._Init("B", col2Pos, 1);
+        collider3._Init("C", col3Pos, 1);
+        collider4._Init("D", col4Pos, 1);
+
         objects.Add(collider1);
         objects.Add(collider2);
         objects.Add(collider3);
         objects.Add(collider4);
     }
-	
-	// Update is called once per frame
-	void FixedUpdate ()
+
+    void FixedUpdate()
     {
+        #region UpdateColliders
         col1Pos = new Vector2(colGO1.transform.position.x, colGO1.transform.position.y);
         col2Pos = new Vector2(colGO2.transform.position.x, colGO2.transform.position.y);
         col3Pos = new Vector2(colGO3.transform.position.x, colGO3.transform.position.y);
         col4Pos = new Vector2(colGO4.transform.position.x, colGO4.transform.position.y);
 
-        collider1.Update(col1Pos);
-        collider2.Update(col2Pos);
-        collider3.Update(col3Pos);
-        collider4.Update(col4Pos);
+        collider1._Update(col1Pos);
+        collider2._Update(col2Pos);
+        collider3._Update(col3Pos);
+        collider4._Update(col4Pos);
+        #endregion
 
-        //Collider1BOXMAX = collider1.Max;
-        //Collider1BOXMIN = collider1.Min;
+        //CollisionAB = util.TestOverLap(collider1, collider2);
+        //CollisionCD = util.TestOverLap(collider3, collider4);
 
-        //Collider2BOXMAX = collider2.Max;
-        //Collider2BOXMIN = collider2.Min;
+        #region SortAndSweep
+        colliderXPairs = null;
+        colliderXPairs = new List<string>();
 
-        Collision = util.TestOverLap(collider1, collider2);
+        colliderYPairs = null;
+        colliderYPairs = new List<string>();
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        util.SortandSweep(objects);
+        currentOBJSColliding = util.agentsColliding;
+
+        util.Xpairs.ForEach(x =>
         {
-            util.SortandSweep(objects);
-        }
+            colliderXPairs.Add(x.GetPairAsString());
+        });
+
+        util.Ypairs.ForEach(x =>
+        {
+            colliderYPairs.Add(x.GetPairAsString());
+        });
+        #endregion
     }
 }
