@@ -6,16 +6,46 @@ namespace Trent
 {
     public class Boid : Agent
     {
-        public override void Initalize(Transform owner)
+        #region ParentClassMemberVariables
+        public float Mass { get { return mass; } }
+        public float MaxSpeed { get { return max_speed; } }
+        public Vector3 Velocity { get { return velocity; } }
+        public Vector3 Acceleration { get { return acceleration; } }
+        public Vector3 Force { get { return force; } }
+        public Vector3 Position { get { return position; } }
+        #endregion
+
+        private List<Boid> neighbors;
+
+        public void AddNeighbor(Boid b)
+        {
+            if(neighbors.Contains(b) == false)
+            {
+                neighbors.Add(b);
+            }
+        }
+
+        public void RemoveNeighbor(Boid b)
+        {
+            if (neighbors.Contains(b) == true)
+            {
+                neighbors.Remove(b);
+            }
+        }
+
+        public override void Initalize(Transform Owner, float Mass, float maxSpeed)
         {
             //NEEDS WORK
             //INITILIZE THE AGENT
 
-            mass = owner.localScale.x;
-            position = owner.position;
-            velocity = new Vector3(0.1f, 0.1f, 0.1f);
+            neighbors = new List<Boid>();
+
+            mass = Mass;
+            max_speed = maxSpeed;
+            velocity = new Vector3(0.1f, 0.1f, 1.0f); //NEEDS WORK
             acceleration = Vector3.zero;
-            max_speed = 1;
+            force = Vector3.zero;
+            position = Owner.position;
         }
 
         public override bool Add_Force(float size, Vector3 direction)
