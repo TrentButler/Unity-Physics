@@ -11,8 +11,6 @@ namespace Trent
     [CustomEditor(typeof(AgentFactoryBehaviour))]
     public class InspectorAgentFactory : Editor
     {
-        GUIStyle header = new GUIStyle();
-
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
@@ -20,19 +18,22 @@ namespace Trent
             var mytarget = target as AgentFactoryBehaviour;
 
             GUILayout.Space(40);
-
             if (GUILayout.Button("ADD"))
             {
-                mytarget.Create();
+                mytarget.Create(mytarget.SpawnPosition);
             }
 
             GUILayout.Space(10);
+            if (GUILayout.Button("ADD RANGE"))
+            {
+                mytarget.Create(mytarget.SpawnCount);
+            }
 
+            GUILayout.Space(10);
             if (GUILayout.Button("REMOVE ALL"))
             {
                 mytarget.DestroyAll();
             }
-
         }
     }
 #endif

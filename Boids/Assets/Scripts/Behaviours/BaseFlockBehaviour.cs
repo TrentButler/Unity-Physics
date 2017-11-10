@@ -8,7 +8,11 @@ namespace Trent
 {
     public class BaseFlockBehaviour : MonoBehaviour
     {
-        public float FlockMovementSpeed = 10.0f;
+        public float FlockMovementSpeed = 1.0f;
+        public float AlignmentForce = 1.0f;
+        public float CohesionForce = 1.0f;
+        public float SeperationForce = 1.0f;
+        public float AgentOffset = 1.0f;
 
         public List<Boid> neighbors;
 
@@ -26,7 +30,7 @@ namespace Trent
 
             force /= neighbors.Count - 1;
 
-            return (force - b.Velocity) / 8;
+            return (force - b.Velocity);
         }
 
         public Vector3 cohesion(Boid b)
@@ -43,7 +47,7 @@ namespace Trent
 
             force /= neighbors.Count - 1.0f;
 
-            return (force - b.Position) / 100;
+            return (force - b.Position);
         }
 
         public Vector3 seperation(Boid b, float distance)
@@ -70,7 +74,6 @@ namespace Trent
             return force;
         }
 
-        // Use this for initialization
         void Start()
         {
             neighbors = GameObject.FindObjectsOfType<Boid>().ToList();
@@ -81,17 +84,16 @@ namespace Trent
             neighbors = GameObject.FindObjectsOfType<Boid>().ToList();
         }
 
-        // Update is called once per frame
         void FixedUpdate()
         {
             neighbors.ForEach(boid =>
             {
-                var vAlignment = alignment(boid);
-                var vCohesion = cohesion(boid);
-                var vSeperation = seperation(boid, 1);
+                var vAlignment = alignment(boid) * AlignmentForce;
+                var vCohesion = cohesion(boid) * CohesionForce;
+                var vSeperation = seperation(boid, AgentOffset) * SeperationForce;
 
-                //var force = (vAlignment + vCohesion + vSeperation);
-                var force = new Vector3(0, 0, 0.5f);
+                var force = (vAlignment + vCohesion + vSeperation);
+                //var force = new Vector3(0, 0, 0.5f);
 
                 boid.Add_Force(FlockMovementSpeed, force);
                 boid.Update_Agent(Time.deltaTime);
@@ -100,17 +102,15 @@ namespace Trent
 
         private void LateUpdate()
         {
-            var agentGameObjects = GameObject.FindObjectsOfType<BaseAgentBehaviour>().ToList();
+            var agentGameObjects = GameObject.FindObjectsOfType<BaseAgentBehaviour>().ToList(); //GET ALL GAMEOBJECTS WITH A A 'BOIDBEHAVIOUR'
             var agents = GameObject.FindObjectsOfType<Boid>().ToList();
-            agentGameObjects.ForEach(boid =>
+
+            for (int i = 0; i < agentGameObjects.Count; i++)
             {
-                int i = 0;
-                if (agents.Count >= 3)
-                {
-                    boid.transform.position = agents[i].Position;
-                }
-                i++;
-            });
+                agentGameObjects[i].transform.position = agents[i].Position;
+                //CHANGE THE MESH'S HEADING
+                agentGameObjects[i].transform.forward = agents[i].Velocity.normalized;
+            }
         }
     }
 }

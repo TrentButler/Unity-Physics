@@ -63,11 +63,11 @@ namespace Trent
 
         public override Vector3 Update_Agent(float deltaTime)
         {
-            acceleration = force * deltaTime; //NEEDS WORK, MASS????
+            acceleration = force * (1 / mass);
 
-            velocity = velocity + (acceleration * deltaTime); //VELOCITY CALCULATION
+            velocity += acceleration * deltaTime; //VELOCITY CALCULATION
 
-            position = position + (velocity * deltaTime); //POSITION CALCULATION
+            position += velocity * deltaTime; //POSITION CALCULATION
 
             return position; //RETURN THE CURRENT POSITION
         }
