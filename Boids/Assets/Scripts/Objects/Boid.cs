@@ -57,7 +57,7 @@ namespace Trent
                 return false;
             }
 
-            force = f;
+            force += f;
             return true;
         }
 

@@ -31,6 +31,11 @@ namespace Trent
             dispersion.minValue = 0.0f;
             alignment.minValue = 0.0f;
             offset.minValue = 1.0f;
+
+            cohesion.value = 1.0f;
+            dispersion.value = 1.0f;
+            alignment.value = 1.0f;
+            offset.value = 1.0f;
         }
         
         void FixedUpdate()

@@ -16,6 +16,15 @@ namespace Trent
         public void FollowBoids()
         {
             //NEEDS WORK
+            if(Follow == true)
+            {
+                Follow = false;
+            }
+
+            else
+            {
+                Follow = true;
+            }
         }
 
         public void NextBoid()
@@ -83,7 +92,7 @@ namespace Trent
             if (Follow == false)
             {
                 //FIXED ANGLE CAM
-                Vector3 fixedPos = new Vector3(40.0f, 20.0f, -70.0f);
+                Vector3 fixedPos = new Vector3(40.0f, 20.0f, -10.0f);
                 Quaternion fixedRot = Quaternion.Euler(16.0f, -31.0f, -2.5f);
 
                 transform.position = fixedPos;

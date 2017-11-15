@@ -8,12 +8,12 @@ namespace Trent
 {
     public class BaseFlockBehaviour : MonoBehaviour
     {
-        public float FlockMovementSpeed = 1.0f;
+        public float FlockMovementSpeed = 0.5f;
         public float AlignmentForce = 0.0f;
         public float CohesionForce = 0.0f;
         public float DispersionForce = 0.0f;
         public float AgentOffset = 1.0f;
-
+        
         public List<Boid> neighbors;
 
         public Vector3 alignment(Boid b)
