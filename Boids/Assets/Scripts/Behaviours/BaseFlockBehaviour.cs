@@ -9,9 +9,9 @@ namespace Trent
     public class BaseFlockBehaviour : MonoBehaviour
     {
         public float FlockMovementSpeed = 1.0f;
-        public float AlignmentForce = 1.0f;
-        public float CohesionForce = 1.0f;
-        public float SeperationForce = 1.0f;
+        public float AlignmentForce = 0.0f;
+        public float CohesionForce = 0.0f;
+        public float DispersionForce = 0.0f;
         public float AgentOffset = 1.0f;
 
         public List<Boid> neighbors;
@@ -90,7 +90,7 @@ namespace Trent
             {
                 var vAlignment = alignment(boid) * AlignmentForce;
                 var vCohesion = cohesion(boid) * CohesionForce;
-                var vSeperation = seperation(boid, AgentOffset) * SeperationForce;
+                var vSeperation = seperation(boid, AgentOffset) * DispersionForce;
 
                 var force = (vAlignment + vCohesion + vSeperation);
                 //var force = new Vector3(0, 0, 0.5f);

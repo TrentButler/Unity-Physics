@@ -13,6 +13,21 @@ namespace Trent
         public float CameraRotation;
         private int agentIndex = 0;
 
+        public void FollowBoids()
+        {
+            //NEEDS WORK
+        }
+
+        public void NextBoid()
+        {
+            agentIndex -= 1; //NEXT AGENT
+        }
+
+        public void PreviousBoid()
+        {
+            agentIndex += 1; //PREVIOUS AGENT
+        }
+
         private void Update()
         {
             if (Input.GetKey(KeyCode.UpArrow))
@@ -45,7 +60,7 @@ namespace Trent
                 agentIndex -= 1; //NEXT AGENT
             }
 
-            Debug.Log(agentIndex);
+            Debug.Log(agentIndex); //REMOVE THIS
         }
 
         void FixedUpdate()
@@ -67,7 +82,12 @@ namespace Trent
 
             if (Follow == false)
             {
-                //FREE LOOK CAMERA
+                //FIXED ANGLE CAM
+                Vector3 fixedPos = new Vector3(40.0f, 20.0f, -70.0f);
+                Quaternion fixedRot = Quaternion.Euler(16.0f, -31.0f, -2.5f);
+
+                transform.position = fixedPos;
+                transform.rotation = fixedRot;
             }
         }
     }
