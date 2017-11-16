@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -52,6 +53,7 @@ namespace Trent
             boid.Initalize(go.transform, 1, 2); //INITILIZE THE BOID OBJECT
         }
 
+        //USE THIS ONE
         public void Create(int count)
         {
             if (count <= 0)
@@ -62,9 +64,9 @@ namespace Trent
             for (int i = 0; i < count; i++)
             {
                 //RANDOM NUMBER
-                float randX = Random.Range(0.0f, 10.0f);
-                float randY = Random.Range(0.0f, 10.0f);
-                float randZ = Random.Range(0.0f, 10.0f);
+                float randX = Random.Range(0.0f, 100.0f);
+                float randY = Random.Range(0.0f, 50.0f);
+                float randZ = Random.Range(0.0f, 100.0f);
                 Vector3 randPosition = new Vector3(randX, randY, randZ);
 
                 var go = new GameObject(); //CREATE AN EMPTY GAMEOBJECT,
@@ -153,7 +155,6 @@ namespace Trent
             }
         }
 
-
         public void Create(Vector3 pos)
         {
             //MAKE A BOID
@@ -197,6 +198,12 @@ namespace Trent
 
         public void DestroyAll()
         {
+            var allAgents = GameObject.FindObjectsOfType<BaseAgentBehaviour>().ToList();
+            var allBoids = GameObject.FindObjectsOfType<Boid>().ToList();
+
+            allAgents.Clear();
+            allBoids.Clear();
+            
             for (int i = 0; i < activeObjects.Count; i++)
             {
                 DestroyImmediate(activeObjects[i]);

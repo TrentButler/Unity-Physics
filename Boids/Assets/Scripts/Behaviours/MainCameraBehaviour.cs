@@ -15,7 +15,6 @@ namespace Trent
 
         public void FollowBoids()
         {
-            //NEEDS WORK
             if(Follow == true)
             {
                 Follow = false;
@@ -29,12 +28,12 @@ namespace Trent
 
         public void NextBoid()
         {
-            agentIndex -= 1; //NEXT AGENT
+            agentIndex += 1; //NEXT AGENT
         }
 
         public void PreviousBoid()
         {
-            agentIndex += 1; //PREVIOUS AGENT
+            agentIndex -= 1; //PREVIOUS AGENT
         }
 
         private void Update()

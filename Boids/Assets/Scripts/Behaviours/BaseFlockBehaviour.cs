@@ -13,6 +13,9 @@ namespace Trent
         public float CohesionForce = 0.0f;
         public float DispersionForce = 0.0f;
         public float AgentOffset = 1.0f;
+
+        public Vector3 minBound;
+        public Vector3 maxBound;
         
         public List<Boid> neighbors;
 
@@ -74,6 +77,59 @@ namespace Trent
             return force;
         }
 
+        private void Bounds()
+        {
+            //NEEDS WORK
+            neighbors.ForEach(boid => 
+            {
+                var x = boid.Position.x;
+                var y = boid.Position.y;
+                var z = boid.Position.z;
+
+                if (x > maxBound.x)
+                {
+                    var xdist = maxBound.x - x;
+                    boid.Add_Force(xdist, -boid.Velocity);
+                    Debug.Log("OUT OF BOUNDS");
+                }
+
+                if (y > maxBound.y)
+                {
+                    var ydist = maxBound.y - y;
+                    boid.Add_Force(ydist, -boid.Velocity);
+                    Debug.Log("OUT OF BOUNDS");
+                }
+
+                if (z > maxBound.z)
+                {
+                    var zdist = maxBound.z - y;
+                    boid.Add_Force(zdist, -boid.Velocity);
+                    Debug.Log("OUT OF BOUNDS");
+                }
+
+                if (x < minBound.x)
+                {
+                    var Xdist = minBound.x - x;
+                    boid.Add_Force(Xdist, -boid.Velocity);
+                    Debug.Log("OUT OF BOUNDS");
+                }
+
+                if (y < minBound.y)
+                {
+                    var Ydist = minBound.y - y;
+                    boid.Add_Force(Ydist, -boid.Velocity);
+                    Debug.Log("OUT OF BOUNDS");
+                }
+
+                if (z < minBound.z)
+                {
+                    var Zdist = minBound.z - z;
+                    boid.Add_Force(Zdist, -boid.Velocity);
+                    Debug.Log("OUT OF BOUNDS");
+                }
+            });
+        }
+
         void Start()
         {
             neighbors = GameObject.FindObjectsOfType<Boid>().ToList();
@@ -98,6 +154,8 @@ namespace Trent
                 boid.Add_Force(FlockMovementSpeed, force);
                 boid.Update_Agent(Time.deltaTime);
             });
+
+            //Bounds();
         }
 
         private void LateUpdate()
