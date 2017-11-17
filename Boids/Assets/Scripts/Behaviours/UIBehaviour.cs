@@ -57,6 +57,7 @@ namespace Trent
             flock = GameObject.FindObjectOfType<BaseFlockBehaviour>();
 
             speed.maxValue = 1.0f;
+            //speed.maxValue = 0.0001f;
             cohesion.maxValue = 100.0f;
             dispersion.maxValue = 100.0f;
             alignment.maxValue = 100.0f;

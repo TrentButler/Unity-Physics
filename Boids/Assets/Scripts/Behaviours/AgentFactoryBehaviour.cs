@@ -18,7 +18,8 @@ namespace Trent
             //MAKE A BOID
 
             var go = new GameObject(); //CREATE AN EMPTY GAMEOBJECT,
-            var boid = new Boid(); //CREATE AN BOID OBJECT
+            //var boid = new Boid(); //CREATE AN BOID OBJECT
+            var boid = ScriptableObject.CreateInstance<Boid>(); //CREATE AN BOID OBJECT
 
             activeAgents.Add(boid); //STORE THE BOID
             activeObjects.Add(go); //STORE THE GAMEOBJECT
@@ -70,7 +71,8 @@ namespace Trent
                 Vector3 randPosition = new Vector3(randX, randY, randZ);
 
                 var go = new GameObject(); //CREATE AN EMPTY GAMEOBJECT,
-                var boid = new Boid(); //CREATE AN BOID OBJECT
+                //var boid = new Boid(); //CREATE AN BOID OBJECT
+                var boid = ScriptableObject.CreateInstance<Boid>(); //CREATE AN BOID OBJECT
 
                 activeAgents.Add(boid); //STORE THE BOID
                 activeObjects.Add(go); //STORE THE GAMEOBJECT
@@ -118,7 +120,8 @@ namespace Trent
                 Vector3 randPosition = new Vector3(randX, randY, randZ);
 
                 var go = new GameObject(); //CREATE AN EMPTY GAMEOBJECT,
-                var boid = new Boid(); //CREATE AN BOID OBJECT
+                //var boid = new Boid(); //CREATE AN BOID OBJECT
+                var boid = ScriptableObject.CreateInstance<Boid>(); //CREATE AN BOID OBJECT
 
                 activeAgents.Add(boid); //STORE THE BOID
                 activeObjects.Add(go); //STORE THE GAMEOBJECT
@@ -160,7 +163,8 @@ namespace Trent
             //MAKE A BOID
 
             var go = new GameObject(); //CREATE AN EMPTY GAMEOBJECT,
-            var boid = new Boid(); //CREATE AN BOID OBJECT
+            //var boid = new Boid(); //CREATE AN BOID OBJECT
+            var boid = ScriptableObject.CreateInstance<Boid>(); //CREATE AN BOID OBJECT
 
             activeAgents.Add(boid); //STORE THE BOID
             activeObjects.Add(go); //STORE THE GAMEOBJECT

@@ -42,7 +42,7 @@ namespace Trent
 
             mass = Mass;
             max_speed = maxSpeed;
-            velocity = new Vector3(0.1f, 0.1f, 1.0f); //NEEDS WORK
+            velocity = new Vector3(0.0f, 0.0f, 0.5f); //NEEDS WORK
             acceleration = Vector3.zero;
             force = Vector3.zero;
             position = Owner.position;
@@ -66,6 +66,8 @@ namespace Trent
             acceleration = force * (1 / mass);
 
             velocity += acceleration * deltaTime; //VELOCITY CALCULATION
+
+            velocity = Vector3.ClampMagnitude(velocity, max_speed); //CLAMP THE VELOCITY BY THE BOID'S MAXIMUM SPEED
 
             position += velocity * deltaTime; //POSITION CALCULATION
 

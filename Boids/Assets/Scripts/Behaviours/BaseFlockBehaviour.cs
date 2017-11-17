@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace Trent
 {
     public class BaseFlockBehaviour : MonoBehaviour
@@ -89,44 +88,47 @@ namespace Trent
                 if (x > maxBound.x)
                 {
                     var xdist = maxBound.x - x;
-                    boid.Add_Force(xdist, -boid.Velocity);
-                    Debug.Log("OUT OF BOUNDS");
+                    boid.Add_Force(xdist, -boid.Velocity.normalized);
+                    //Debug.Log(boid.name + "OUT OF BOUNDS");
+                    
                 }
 
                 if (y > maxBound.y)
                 {
                     var ydist = maxBound.y - y;
-                    boid.Add_Force(ydist, -boid.Velocity);
-                    Debug.Log("OUT OF BOUNDS");
+                    boid.Add_Force(ydist, -boid.Velocity.normalized);
+                    //Debug.Log(boid.name + "OUT OF BOUNDS");
                 }
 
                 if (z > maxBound.z)
                 {
                     var zdist = maxBound.z - y;
-                    boid.Add_Force(zdist, -boid.Velocity);
-                    Debug.Log("OUT OF BOUNDS");
+                    boid.Add_Force(zdist, -boid.Velocity.normalized);
+                    //Debug.Log(boid.name + "OUT OF BOUNDS");
                 }
 
                 if (x < minBound.x)
                 {
                     var Xdist = minBound.x - x;
-                    boid.Add_Force(Xdist, -boid.Velocity);
-                    Debug.Log("OUT OF BOUNDS");
+                    boid.Add_Force(Xdist, -boid.Velocity.normalized);
+                    //Debug.Log(boid.name + "OUT OF BOUNDS");
                 }
 
                 if (y < minBound.y)
                 {
                     var Ydist = minBound.y - y;
-                    boid.Add_Force(Ydist, -boid.Velocity);
-                    Debug.Log("OUT OF BOUNDS");
+                    boid.Add_Force(Ydist, -boid.Velocity.normalized);
+                    //Debug.Log(boid.name + "OUT OF BOUNDS");
                 }
 
                 if (z < minBound.z)
                 {
                     var Zdist = minBound.z - z;
-                    boid.Add_Force(Zdist, -boid.Velocity);
-                    Debug.Log("OUT OF BOUNDS");
+                    boid.Add_Force(Zdist, -boid.Velocity.normalized);
+                    //Debug.Log(boid.name + "OUT OF BOUNDS");
                 }
+
+                boid.Update_Agent(Time.deltaTime);
             });
         }
 
@@ -142,20 +144,21 @@ namespace Trent
 
         void FixedUpdate()
         {
-            neighbors.ForEach(boid =>
+            if(neighbors.Count > 1)
             {
-                var vAlignment = alignment(boid) * AlignmentForce;
-                var vCohesion = cohesion(boid) * CohesionForce;
-                var vSeperation = seperation(boid, AgentOffset) * DispersionForce;
+                neighbors.ForEach(boid =>
+                {
+                    var vAlignment = alignment(boid) * AlignmentForce;
+                    var vCohesion = cohesion(boid) * CohesionForce;
+                    var vSeperation = seperation(boid, AgentOffset) * DispersionForce;
 
-                var force = (vAlignment + vCohesion + vSeperation);
-                //var force = new Vector3(0, 0, 0.5f);
+                    var force = (vAlignment + vCohesion + vSeperation);
+                    //var force = new Vector3(0, 0, 0.5f);
 
-                boid.Add_Force(FlockMovementSpeed, force);
-                boid.Update_Agent(Time.deltaTime);
-            });
-
-            //Bounds();
+                    boid.Add_Force(FlockMovementSpeed, force);
+                    boid.Update_Agent(Time.deltaTime);
+                });
+            }
         }
 
         private void LateUpdate()
@@ -169,6 +172,8 @@ namespace Trent
                 //CHANGE THE MESH'S HEADING
                 agentGameObjects[i].transform.forward = agents[i].Velocity.normalized;
             }
+
+            Bounds(); //BOUNDING VOLUME
         }
     }
 }
