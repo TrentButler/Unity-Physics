@@ -144,6 +144,7 @@ MonoBehaviour:
   CohesionForce: 1
   DispersionForce: 1
   AgentOffset: 50
+  PerchingLevel: 20
   minBound: {x: 0, y: 0, z: 0}
   maxBound: {x: 100, y: 70, z: 100}
   neighbors: []
@@ -456,6 +457,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpawnCount: 10
   SpawnPosition: {x: 0, y: 0, z: 0}
+  PerchingTimer: 10
   activeAgents: []
   activeObjects: []
   Mesh: {fileID: 1282840740113914, guid: 721d22b6cc43733488b68b63c6caf888, type: 2}
@@ -974,42 +976,42 @@ Prefab:
     - target: {fileID: 224808921261578036, guid: 192eed7e594b76e41b1a8ee4d9190672,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: -10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224240338986382198, guid: 192eed7e594b76e41b1a8ee4d9190672,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: -5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224493258775336908, guid: 192eed7e594b76e41b1a8ee4d9190672,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: -10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224858823032541634, guid: 192eed7e594b76e41b1a8ee4d9190672,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: -5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224566162508791768, guid: 192eed7e594b76e41b1a8ee4d9190672,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: -5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224212163067430838, guid: 192eed7e594b76e41b1a8ee4d9190672,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: -5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224555394498156096, guid: 192eed7e594b76e41b1a8ee4d9190672,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: -10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224624345941476134, guid: 192eed7e594b76e41b1a8ee4d9190672,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: -10
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 192eed7e594b76e41b1a8ee4d9190672, type: 2}

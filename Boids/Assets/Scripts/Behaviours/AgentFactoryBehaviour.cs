@@ -9,6 +9,7 @@ namespace Trent
     {
         public int SpawnCount = 0;
         public Vector3 SpawnPosition = Vector3.zero;
+        public float PerchingTimer = 2.0f;
         public List<Agent> activeAgents;
         public List<GameObject> activeObjects;
         public GameObject Mesh;
@@ -106,6 +107,7 @@ namespace Trent
 
                 go.transform.position = randPosition;
                 boid.Initalize(go.transform, 1, 2); //INITILIZE THE BOID OBJECT
+                boid.PerchTimer = PerchingTimer;
             }
         }
 
@@ -155,6 +157,7 @@ namespace Trent
 
                 go.transform.position = randPosition;
                 boid.Initalize(go.transform, 1, 2); //INITILIZE THE BOID OBJECT
+                boid.PerchTimer = PerchingTimer;
             }
         }
 
@@ -198,6 +201,7 @@ namespace Trent
 
             go.transform.position = pos;
             boid.Initalize(go.transform, 1, 2); //INITILIZE THE BOID OBJECT
+            boid.PerchTimer = PerchingTimer;
         }
 
         public void DestroyAll()

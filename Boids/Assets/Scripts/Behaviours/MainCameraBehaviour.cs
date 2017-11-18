@@ -82,10 +82,13 @@ namespace Trent
 
             if (Follow == true)
             {
-                var rearAgent = allAgents[agentIndex].transform.position;
+                if(allAgents.Count > 0)
+                {
+                    var rearAgent = allAgents[agentIndex].transform.position;
 
-                GetComponent<Camera>().transform.position = rearAgent + Offset;
-                GetComponent<Camera>().transform.LookAt(rearAgent);
+                    GetComponent<Camera>().transform.position = rearAgent + Offset;
+                    GetComponent<Camera>().transform.LookAt(rearAgent);
+                }
             }
 
             if (Follow == false)

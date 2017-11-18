@@ -13,13 +13,23 @@ namespace Trent
         public Vector3 Acceleration { get { return acceleration; } }
         public Vector3 Force { get { return force; } }
         public Vector3 Position { get { return position; } }
+        private float perchTimer;
+        public float PerchTimer
+        {
+            get { return perchTimer; }
+            set { perchTimer = value; _originalPerchTimer = value; }
+        }
+        public bool Perching { get { return perching; } }
+        private float _originalPerchTimer;
+
+        private bool perching;
         #endregion
 
         private List<Boid> neighbors;
 
         public void AddNeighbor(Boid b)
         {
-            if(neighbors.Contains(b) == false)
+            if (neighbors.Contains(b) == false)
             {
                 neighbors.Add(b);
             }
@@ -31,6 +41,26 @@ namespace Trent
             {
                 neighbors.Remove(b);
             }
+        }
+
+        public void SetPerching(bool isPerching)
+        {
+            perching = isPerching;
+        }
+        public void SetPerching(bool isPerching, float perchLevel)
+        {
+            perching = isPerching;
+            position.y = perchLevel;
+        }
+        public void SetPerching(bool isPerching, Vector3 target)
+        {
+            perching = isPerching;
+            position = target;
+        }
+
+        public void ResetPerchTimer()
+        {
+            PerchTimer = _originalPerchTimer;
         }
 
         public override void Initalize(Transform Owner, float Mass, float maxSpeed)

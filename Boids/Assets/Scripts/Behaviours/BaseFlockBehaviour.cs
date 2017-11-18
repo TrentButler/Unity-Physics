@@ -12,6 +12,7 @@ namespace Trent
         public float CohesionForce = 0.0f;
         public float DispersionForce = 0.0f;
         public float AgentOffset = 1.0f;
+        public float PerchingLevel = 1.0f;
 
         public Vector3 minBound;
         public Vector3 maxBound;
@@ -76,6 +77,8 @@ namespace Trent
             return force;
         }
 
+
+        //NEEDS WORK
         private void Bounds()
         {
             //NEEDS WORK
@@ -84,6 +87,12 @@ namespace Trent
                 var x = boid.Position.x;
                 var y = boid.Position.y;
                 var z = boid.Position.z;
+
+                //PERCHING CHECK
+                if(y <= PerchingLevel)
+                {
+                    boid.SetPerching(true, PerchingLevel);
+                }
 
                 if (x > maxBound.x)
                 {
@@ -142,12 +151,31 @@ namespace Trent
             neighbors = GameObject.FindObjectsOfType<Boid>().ToList();
         }
 
+
+        //NEEDS WORK
         void FixedUpdate()
         {
             if(neighbors.Count > 1)
             {
-                neighbors.ForEach(boid =>
+                Bounds(); //BOUNDING VOLUME
+
+                foreach (var boid in neighbors)
                 {
+                    //NEEDS WORK
+                    if (boid.Perching == true)
+                    {
+                        if (boid.PerchTimer > 0.0f)
+                        {
+                            boid.PerchTimer -= Time.deltaTime;
+                        }
+
+                        if (boid.PerchTimer <= 0.0f)
+                        {
+                            boid.SetPerching(false);
+                            boid.ResetPerchTimer();
+                        }
+                    }
+
                     var vAlignment = alignment(boid) * AlignmentForce;
                     var vCohesion = cohesion(boid) * CohesionForce;
                     var vSeperation = seperation(boid, AgentOffset) * DispersionForce;
@@ -157,7 +185,7 @@ namespace Trent
 
                     boid.Add_Force(FlockMovementSpeed, force);
                     boid.Update_Agent(Time.deltaTime);
-                });
+                }
             }
         }
 
@@ -172,8 +200,6 @@ namespace Trent
                 //CHANGE THE MESH'S HEADING
                 agentGameObjects[i].transform.forward = agents[i].Velocity.normalized;
             }
-
-            Bounds(); //BOUNDING VOLUME
         }
     }
 }
