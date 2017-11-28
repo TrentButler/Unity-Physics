@@ -12,10 +12,12 @@ namespace Trent
         public Vector3 Offset;
         public float CameraRotation;
         private int agentIndex = 0;
+        public float cameraSpeed = 1.0f;
+        public float cameraTranslationSpeed = 1.0f;
 
         public void FollowBoids()
         {
-            if(Follow == true)
+            if (Follow == true)
             {
                 Follow = false;
             }
@@ -36,53 +38,23 @@ namespace Trent
             agentIndex -= 1; //PREVIOUS AGENT
         }
 
-        private void Update()
+        public void ResetCamera()
         {
-            if (Input.GetKey(KeyCode.UpArrow))
-            {
-                Offset.z -= 1f;
-            }
-
-            if (Input.GetKey(KeyCode.DownArrow))
-            {
-                Offset.z += 1f;
-            }
-
-            if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                Offset.x -= 1f;
-            }
-
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
-                Offset.x += 1f;
-            }
-
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                agentIndex += 1; //PREVIOUS AGENT
-            }
-
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                agentIndex -= 1; //NEXT AGENT
-            }
-
-            Debug.Log(agentIndex); //REMOVE THIS
+            transform.rotation = Quaternion.identity; //ZERO OUT THE ROTATION
         }
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
-            var allAgents = GameObject.FindObjectsOfType<BaseAgentBehaviour>().ToList();            
+            var allAgents = GameObject.FindObjectsOfType<BaseAgentBehaviour>().ToList();
 
-            if(agentIndex >= allAgents.Count || agentIndex < 0)
+            if (agentIndex >= allAgents.Count || agentIndex < 0)
             {
                 agentIndex = 0;
             }
 
             if (Follow == true)
             {
-                if(allAgents.Count > 0)
+                if (allAgents.Count > 0)
                 {
                     var rearAgent = allAgents[agentIndex].transform.position;
 
@@ -93,12 +65,46 @@ namespace Trent
 
             if (Follow == false)
             {
-                //FIXED ANGLE CAM
-                Vector3 fixedPos = new Vector3(40.0f, 20.0f, -10.0f);
-                Quaternion fixedRot = Quaternion.Euler(16.0f, -31.0f, -2.5f);
+                #region MouseLook
+                //CALCULATE AN MOUSE DELTA
+                //DERIVE AN DIRECTION
+                //LERP BETWEEN THE CURRENT CAMERA ROTATION TO AN NEW CAMERA ROTATION
+                if (Input.GetMouseButton(0))
+                {
+                    var deltaX = Input.GetAxis("Mouse X"); //GET THE MOUSE DELTA X
+                    var deltaY = Input.GetAxis("Mouse Y"); //GET THE MOUSE DELTA Y
 
-                transform.position = fixedPos;
-                transform.rotation = fixedRot;
+                    Vector3 rotX = new Vector3(-deltaY, 0, 0); 
+                    Vector3 rotY = new Vector3(0, deltaX, 0);
+
+                    Quaternion rot = Quaternion.Euler(rotX); //CREATE A QUATERNION ROTATION FROM A EULER ANGLE ROTATION
+                    transform.rotation = Quaternion.Slerp(transform.rotation, transform.rotation * rot, 1.0f); //INTERPOLATE BETWEEN THE CURRENT ROTATION AND THE NEW ROTATION
+
+                    rot = Quaternion.Euler(rotY); //CREATE A QUATERNION ROTATION FROM A EULER ANGLE ROTATION
+                    transform.rotation = Quaternion.Slerp(transform.rotation, transform.rotation * rot, 1.0f); //INTERPOLATE BETWEEN THE CURRENT ROTATION AND THE NEW ROTATION
+                }
+
+                //TRANSLATE THE CAMERA BASED ON CLICKDRAG DELTA
+                if (Input.GetMouseButton(2))
+                {
+                    var dX = Input.GetAxis("Mouse X"); //GET THE DELTA MOUSE X
+                    var dY = Input.GetAxis("Mouse Y"); //GET THE DELTA MOUSE Y
+
+                    Vector3 trans = new Vector3(-(dX * cameraTranslationSpeed), -(dY * cameraTranslationSpeed), 0); //DERIVE A TRANSLATION VECTOR
+                    GetComponent<Transform>().Translate(trans); //APPLY THE TRANSLATION TO THE CAMERA'S TRANSFORM
+                }
+
+                //MOVE THE CAMERA EITHER FORWARD OR BACKWARD FROM MOUSE SCROLL
+                var scrollDelta = Input.GetAxis("Mouse ScrollWheel"); //GET THE MOUSE SCROLL DELTA
+                Vector3 translation = new Vector3(0, 0, scrollDelta * cameraSpeed); //DERIVE A TRANSLATION VECTOR
+                GetComponent<Transform>().Translate(translation); //TRANSLATE THE CAMERA'S TRANSFORM
+
+                if(Input.GetKeyDown(KeyCode.Space))
+                {
+                    //RESET THE CAMERA'S ROTATION TO ZERO
+                    ResetCamera();
+                }
+                #endregion
             }
         }
     }

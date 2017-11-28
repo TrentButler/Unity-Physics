@@ -14,9 +14,11 @@ namespace Trent
         public float AgentOffset = 1.0f;
         public float PerchingLevel = 1.0f;
 
+        //public List<Boid> currentPerching;
+
         public Vector3 minBound;
         public Vector3 maxBound;
-        
+
         public List<Boid> neighbors;
 
         public Vector3 alignment(Boid b)
@@ -82,14 +84,14 @@ namespace Trent
         private void Bounds()
         {
             //NEEDS WORK
-            neighbors.ForEach(boid => 
+            neighbors.ForEach(boid =>
             {
                 var x = boid.Position.x;
                 var y = boid.Position.y;
                 var z = boid.Position.z;
 
                 //PERCHING CHECK
-                if(y <= PerchingLevel)
+                if (y <= PerchingLevel)
                 {
                     boid.SetPerching(true, PerchingLevel);
                 }
@@ -99,7 +101,7 @@ namespace Trent
                     var xdist = maxBound.x - x;
                     boid.Add_Force(xdist, -boid.Velocity.normalized);
                     //Debug.Log(boid.name + "OUT OF BOUNDS");
-                    
+
                 }
 
                 if (y > maxBound.y)
@@ -151,11 +153,10 @@ namespace Trent
             neighbors = GameObject.FindObjectsOfType<Boid>().ToList();
         }
 
-
         //NEEDS WORK
         void FixedUpdate()
         {
-            if(neighbors.Count > 1)
+            if (neighbors.Count > 1)
             {
                 Bounds(); //BOUNDING VOLUME
 
