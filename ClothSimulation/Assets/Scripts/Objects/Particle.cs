@@ -43,6 +43,7 @@ namespace Trent
         {
             acceleration = force / mass;
             velocity += acceleration * deltaTime;
+            velocity = Vector3.ClampMagnitude(velocity, 10);
             position += velocity * deltaTime;
             return position;
         }

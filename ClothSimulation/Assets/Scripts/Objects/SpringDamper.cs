@@ -7,50 +7,50 @@ namespace Trent
     public class SpringDamper
     {
         private Particle one, two;
+
         public Particle One { get { return one; } }
         public Particle Two { get { return two; } }
 
-        private float Ks; //SPRING CONSTANT
-        private float Lo; //RESTING LENGTH
+        public float Ks; //SPRING CONSTANT
+        public float Kd; //DAMPING FACTOR
+        public float Lo; //RESTING LENGTH
 
         public SpringDamper()
         {
             one = new Particle();
             two = new Particle();
             Ks = 0;
+            Kd = 0;
             Lo = 0;
         }
-        public SpringDamper(Particle p1, Particle p2, float sC, float rL)
+        public SpringDamper(Particle p1, Particle p2, float sC, float dF, float rL)
         {
             one = p1;
             two = p2;
             Ks = sC;
+            Kd = dF;
             Lo = rL;
-        }
+        }        
         
-
-        //NEEDS WORK
-        public void Update(float deltaTime)
+        public void CalculateForces()
         {
-            ////CONVERT ALL THE 3D DISTANCES AND VELOCITIES INTO 1D
-            //var convertedDist = (two.Position - one.Position).magnitude;
-            //var convertecVelo = (two.Velocity - one.Velocity).magnitude;
-            ////COMPUTE THE SPRING FORCE IN 1D
-            ////TURN THE 1D FORCE INTO A 3D FORCE            
+            //CALCULATE THE UNIT LENGTH BETWEEN TWO VECTORS
+            Vector3 length = two.Position - one.Position;
+            float L = length.magnitude;
+            Vector3 E = length / L;
 
-            var dist = one.Position - two.Position;
-            //var relativeHeading = (two.Velocity - one.Velocity).normalized;
-            var heading = two.Velocity.normalized;
+            //CALCULATE THE 1D VELOCITIES
+            Vector3 vOne = one.Velocity;
+            Vector3 vTwo = two.Velocity;
+            float v1 = Vector3.Dot(E, vOne);
+            float v2 = Vector3.Dot(E, vTwo);
 
-            //var offset = Lo - dist.magnitude;
-            var offset = one.Position.magnitude - dist.magnitude;
+            //CONVERT FROM 1D TO 3D
+            float sMinusd = -Ks * (Lo - L) - Kd * (v1 - v2);
+            Vector3 force = sMinusd * E;
 
-            Vector3 force = heading * offset;
-
-            //One.AddForce(-force);
-            Two.AddForce(force);
-            //One.Update(deltaTime);
-            Two.Update(deltaTime);
+            one.AddForce(force);
+            two.AddForce(-force);
         }
     }
 }
