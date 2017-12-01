@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Trent
 {
+    [System.Serializable]
     public class Particle
     {
         private float mass;
@@ -13,7 +14,9 @@ namespace Trent
         private Vector3 position;
 
         #region Propteries
+        [SerializeField]
         public Vector3 Position { get { return position; } }
+        [SerializeField]
         public Vector3 Velocity { get { return velocity; } }
         #endregion
 

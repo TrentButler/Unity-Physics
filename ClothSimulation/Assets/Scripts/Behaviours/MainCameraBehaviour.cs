@@ -24,7 +24,7 @@ namespace Trent
             //CALCULATE AN MOUSE DELTA
             //DERIVE AN DIRECTION
             //LERP BETWEEN THE CURRENT CAMERA ROTATION TO AN NEW CAMERA ROTATION
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(1))
             {
                 var deltaX = Input.GetAxis("Mouse X"); //GET THE MOUSE DELTA X
                 var deltaY = Input.GetAxis("Mouse Y"); //GET THE MOUSE DELTA Y

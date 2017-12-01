@@ -7,28 +7,35 @@ namespace Trent
 {
     public class ClothBehaviour : MonoBehaviour
     {
-
         public int Rows = 2;
         public int Columns = 2;
         public float offset = 1.0f;
+        public bool useGravity = false;
 
-        //public bool useGravity = false;
+        public float springConstant = 1.0f;
+        public float dampingFactor = 1.0f;
+        public float restLength = 1.0f;
+
         public GameObject model;
         public List<GameObject> GOs;
         public List<Particle> particles;
         public List<SpringDamper> dampers;
 
-        // Use this for initialization
+        private Vector3 gravity()
+        {
+            return new Vector3(0, -9.81f, 0);
+        }
+
         void Start()
         {
             GOs = new List<GameObject>();
             particles = new List<Particle>();
             dampers = new List<SpringDamper>();
 
-            #region Grid
-            for(int r = 0; r < Rows; r++)
+            #region Generate Grid
+            for (int c = 0; c < Columns; c++)
             {
-                for(int c = 0; c < Columns; c++)
+                for (int r = 0; r < Rows; r++)
                 {
                     //CREATE INSTANCE OF
                     //-PARTICLE
@@ -48,20 +55,123 @@ namespace Trent
             }
             #endregion
 
-            //NEEDS WORK
-            //ADD SPRING DAMPERS
-            //for(int i = 0; i < particles.Count; i++)
-            //{
-            //    #region Horizontal
-            //    var p1 = particles[i];
-            //    var p2 = particles[i + 1];
-            //    #endregion
-            //}
-        }
-        
-        void Update()
-        {
+            #region Apply SpringDampers
+            //APPLY A SPRING DAMPER BETWEEN TWO PARTICLES
+            //HORIZONTALLY
+            int xIncrementor = 1;
+            for (int i = 0; i < Rows * Columns; i++)
+            {
+                int second = i + 1;
 
+                if (xIncrementor == Rows)
+                {
+                    xIncrementor = 1; //RESET THE INCREMENTOR
+                    continue;
+                }
+
+                var p1 = particles[i];
+                var p2 = particles[second];
+
+                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, restLength);
+                dampers.Add(springDamper);
+                xIncrementor++;
+            }
+
+            //VERTICALLY
+            for (int i = 0; i < Rows * Columns; i++)
+            {
+                int second = i + Columns;
+
+                if (i + Columns > (Rows * Columns) - 1)
+                {
+                   //GOs[i].GetComponent<ParticleBehaviour>().isKinematic = true;
+                    continue; //TOP OF GRID CHECK
+                }
+
+                var p1 = particles[i];
+                var p2 = particles[second];
+
+                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, restLength);
+                dampers.Add(springDamper);
+            }
+
+            //DIAGONALLY UP RIGHT
+            xIncrementor = 1;
+            for (int i = 0; i < Rows * Columns; i++)
+            {
+                int second = (i + 1) + Columns; // UP RIGHT
+
+                if (i + Columns > (Rows * Columns) - 1)
+                {
+                    continue; //TOP OF GRID CHECK
+                }
+
+                if (xIncrementor == Rows)
+                {
+                    //CHECK IF AT END OF ROW
+                    xIncrementor = 1; //RESET THE INCREMENTOR
+                    continue;
+                }
+
+                var p1 = particles[i];
+                var p2 = particles[second];
+
+                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, restLength);
+                dampers.Add(springDamper);
+                xIncrementor++;
+            }
+
+            //DIAGONALLY UP LEFT
+            xIncrementor = 1;
+            for (int i = 0; i < Rows * Columns; i++)
+            {
+                int second = (i - 1) + Columns; // UP LEFT
+
+                if (i + Columns > (Rows * Columns) - 1)
+                {
+                    continue; //TOP OF GRID CHECK
+                }
+
+                if (xIncrementor == Rows)
+                {
+                    //CHECK IF AT END OF ROW
+                    xIncrementor = 1; //RESET THE INCREMENTOR
+                    continue;
+                }
+
+                if (xIncrementor == 1 && i < Rows * Columns)
+                {
+                    //GOs[i].GetComponent<ParticleBehaviour>().isKinematic = true;
+                    //CHECK FOR FIRST PARTICLE IN ROW
+                    continue;
+                }
+
+                var p1 = particles[i];
+                var p2 = particles[second];
+
+                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, restLength);
+                dampers.Add(springDamper);
+                xIncrementor++;
+            }
+            #endregion
+        }
+
+        void FixedUpdate()
+        {
+            dampers.ForEach(x =>
+            {
+                x.Ks = springConstant;
+                x.Kd = dampingFactor;
+                x.Lo = restLength;
+
+                if(useGravity == true)
+                {
+                    x.One.AddForce(gravity());
+                    x.Two.AddForce(gravity());
+                }
+
+                x.CalculateForces();
+            });
         }
     }
 }
