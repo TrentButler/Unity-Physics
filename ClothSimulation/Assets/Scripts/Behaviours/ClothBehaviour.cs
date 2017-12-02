@@ -9,6 +9,7 @@ namespace Trent
     {
         public int Rows = 2;
         public int Columns = 2;
+        public float Mass = 1.0f;
         public float offset = 1.0f;
         public bool useGravity = false;
 
@@ -41,11 +42,11 @@ namespace Trent
                     //-PARTICLE
                     //-MODEL
 
-                    Particle p = new Particle(new Vector3(r * offset, c * offset, 0), new Vector3(0, 0.1f, 0), 1.0f); //CREATE INSTANCE OF PARTICLE
+                    Particle p = new Particle(new Vector3(r * offset, c * offset, 0), new Vector3(0, 0.1f, 0), Mass); //CREATE INSTANCE OF PARTICLE
                     var go = new GameObject();
                     go.AddComponent<ParticleBehaviour>();
                     go.GetComponent<ParticleBehaviour>().particle = p;
-
+                    
                     var m = Instantiate(model, go.transform.position, go.transform.rotation);
                     m.transform.SetParent(go.transform);
 
@@ -122,36 +123,30 @@ namespace Trent
             }
 
             //DIAGONALLY UP LEFT
-            xIncrementor = 1;
             for (int i = 0; i < Rows * Columns; i++)
             {
+                if(i == 0)
+                {
+                    continue; //SKIP THIS PARTICLE
+                }
+
+                if(i % Columns == 0)
+                {
+                    continue; //SKIP THIS PARTICLE
+                }
+
                 int second = (i - 1) + Columns; // UP LEFT
 
                 if (i + Columns > (Rows * Columns) - 1)
                 {
                     continue; //TOP OF GRID CHECK
                 }
-
-                if (xIncrementor == Rows)
-                {
-                    //CHECK IF AT END OF ROW
-                    xIncrementor = 1; //RESET THE INCREMENTOR
-                    continue;
-                }
-
-                if (xIncrementor == 1 && i < Rows * Columns)
-                {
-                    //GOs[i].GetComponent<ParticleBehaviour>().isKinematic = true;
-                    //CHECK FOR FIRST PARTICLE IN ROW
-                    continue;
-                }
-
+                
                 var p1 = particles[i];
                 var p2 = particles[second];
 
                 var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, restLength);
                 dampers.Add(springDamper);
-                xIncrementor++;
             }
             #endregion
         }
@@ -160,6 +155,8 @@ namespace Trent
         {
             dampers.ForEach(x =>
             {
+                Debug.DrawLine(x.One.Position, x.Two.Position, Color.green);
+
                 x.Ks = springConstant;
                 x.Kd = dampingFactor;
                 x.Lo = restLength;
