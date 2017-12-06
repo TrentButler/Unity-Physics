@@ -8,14 +8,14 @@ namespace Trent
     [System.Serializable]
     public class aaBB : ScriptableObject
     {
-        public void _Init(string name, Vector3 position, float size)
+        public void _Init(int id, Vector3 position, float size)
         {
             //XMIN = POSITION.X -= SIZE
             //XMAX = POSITION.X += SIZE
             //YMIN = POSITION.Y -= SIZE
             //YMAX = POSITION.Y += SIZE
 
-            _name = name;
+            _id = id;
             _position = position;
             _size = size;
             min.x = position.x - size;
@@ -40,8 +40,8 @@ namespace Trent
             max.z = position.z + Size;
         }
 
-        public string Name { get { return _name; } }
-        private string _name;
+        public int Id { get { return _id; } }
+        private int _id;
 
         public Vector3 Position { get { return _position; } }
         private Vector3 _position;
@@ -75,6 +75,9 @@ namespace Trent
 
         public bool ComparePair(ColPair other)
         {
+            //SORT BY LOWEST ID(int)
+            pair.Sort((x, y) => { return x.Id.CompareTo(y.Id); });
+
             var one = other.GetPair()[0];
             var two = other.GetPair()[1];
 
@@ -90,24 +93,29 @@ namespace Trent
                         return true;
                     }
                 }
-
             }
             return false;
         }
 
         public List<aaBB> GetPair()
         {
+            //SORT BY LOWEST ID(int)
+            pair.Sort((x, y) => { return x.Id.CompareTo(y.Id); });
+
             return pair;
         }
 
         public string GetPairAsString()
         {
+            //SORT BY LOWEST ID(int)
+            pair.Sort((x, y) => { return x.Id.CompareTo(y.Id); });
+
             if (pair.Count > 0)
             {
                 string sPair = "";
                 for (int i = 0; i < pair.Count; i++)
                 {
-                    sPair += (pair[i].Name + ",");
+                    sPair += ("COL:" + pair[i].Id + ",");
                 }
                 return sPair;
             }
@@ -115,7 +123,7 @@ namespace Trent
         }
     }
 
-    public class Collider
+    public class ColliderSystem
     {
         private List<aaBB> XaxisList = new List<aaBB>();
         private List<aaBB> YaxisList = new List<aaBB>();
@@ -125,7 +133,8 @@ namespace Trent
         public List<ColPair> Ypairs = new List<ColPair>();
         public List<ColPair> Zpairs = new List<ColPair>();
 
-        public List<string> agentsColliding = new List<string>();
+        public List<ColPair> possibleCollision = new List<ColPair>();
+        public List<ColPair> currentColliding = new List<ColPair>();
 
         public bool TestOverLap(aaBB col1, aaBB col2)
         {
@@ -149,12 +158,48 @@ namespace Trent
         }
 
         //NEEDS WORK
+        //TEST THIS
         public void TestCollision()
         {
-            agentsColliding = new List<string>();
-            //IF THERE ARE DUPLICATE PAIRS IN ALL THREE AXIES, THERE IS COLLISION
+            if(currentColliding != null)
+            {
+                currentColliding = null;
+            }
 
+            currentColliding = new List<ColPair>();
+            //IF THERE ARE DUPLICATE PAIRS IN ALL THREE AXIES, THERE IS COLLISION
             //12:35 - CHECK THE X,Y,Z AXISLISTs FOR DUPLICATE PAIRS
+
+            for (int i = 0; i < Xpairs.Count; i++)
+            {
+                //COMPARE XPAIR[I] TO YPAIR[J]
+                for (int j = 0; j < Ypairs.Count; j++)
+                {
+                    if (Xpairs[i].ComparePair(Ypairs[j]) == true)
+                    {
+                        //ADD THIS PAIR TO THE POSSIBLECOLLISION LIST
+                        possibleCollision.Add(Xpairs[i]);
+                    }
+                }
+            }
+
+            //COMPARE EACH PAIR FROM THE ZAXIS TO ALL OF THE PAIRS IN POSSIBLECOLLISION LIST
+            for (int i = 0; i < Zpairs.Count; i++)
+            {
+                //COMPARE ZPAIR[I] TO POSSIBLECOLLISION[J]
+                for (int j = 0; j < possibleCollision.Count; j++)
+                {
+                    if (Zpairs[i].ComparePair(possibleCollision[j]) == true)
+                    {
+                        var pair = Zpairs[i];
+
+                        if(currentColliding.Contains(pair) == false)
+                        {
+                            currentColliding.Add(pair); //ADD PAIR TO CURRENTCOLLIDING
+                        }
+                    }
+                }
+            }
         }
 
         public void SortandSweep(List<aaBB> objectsInScene)

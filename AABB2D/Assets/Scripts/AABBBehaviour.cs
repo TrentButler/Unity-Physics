@@ -12,7 +12,7 @@ namespace Trent
         public aaBB collider3;
         public aaBB collider4;
 
-        public Collider util = new Collider();
+        public ColliderSystem util = new ColliderSystem();
 
         private List<aaBB> objects = new List<aaBB>();
         public List<string> currentOBJSColliding = new List<string>();
@@ -28,14 +28,13 @@ namespace Trent
         private Transform colGO3;
         private Transform colGO4;
 
-        private Vector2 col1Pos;
-        private Vector2 col2Pos;
-        private Vector2 col3Pos;
-        private Vector2 col4Pos;
+        private Vector3 col1Pos;
+        private Vector3 col2Pos;
+        private Vector3 col3Pos;
+        private Vector3 col4Pos;
 
         void Start()
-        {
-
+        {   
             #region GameObjectTOAABB
             colGO1 = GameObject.FindGameObjectWithTag("col1").transform;
             colGO2 = GameObject.FindGameObjectWithTag("col2").transform;
@@ -53,10 +52,10 @@ namespace Trent
             collider3 = ScriptableObject.CreateInstance<aaBB>() as aaBB;
             collider4 = ScriptableObject.CreateInstance<aaBB>() as aaBB;
 
-            collider1._Init("A", col1Pos, 1);
-            collider2._Init("B", col2Pos, 1);
-            collider3._Init("C", col3Pos, 1);
-            collider4._Init("D", col4Pos, 1);
+            collider1._Init(1, col1Pos, 0.5f);
+            collider2._Init(2, col2Pos, 0.5f);
+            collider3._Init(3, col3Pos, 0.5f);
+            collider4._Init(4, col4Pos, 0.5f);
 
             objects.Add(collider1);
             objects.Add(collider2);
@@ -67,10 +66,10 @@ namespace Trent
         void FixedUpdate()
         {
             #region UpdateColliders
-            col1Pos = new Vector2(colGO1.transform.position.x, colGO1.transform.position.y);
-            col2Pos = new Vector2(colGO2.transform.position.x, colGO2.transform.position.y);
-            col3Pos = new Vector2(colGO3.transform.position.x, colGO3.transform.position.y);
-            col4Pos = new Vector2(colGO4.transform.position.x, colGO4.transform.position.y);
+            col1Pos = new Vector3(colGO1.transform.position.x, colGO1.transform.position.y, colGO1.transform.position.z);
+            col2Pos = new Vector3(colGO2.transform.position.x, colGO2.transform.position.y, colGO2.transform.position.z);
+            col3Pos = new Vector3(colGO3.transform.position.x, colGO3.transform.position.y, colGO3.transform.position.z);
+            col4Pos = new Vector3(colGO4.transform.position.x, colGO4.transform.position.y, colGO4.transform.position.z);
 
             collider1._Update(col1Pos);
             collider2._Update(col2Pos);
@@ -92,18 +91,26 @@ namespace Trent
             colliderZPairs = new List<string>();
 
             util.SortandSweep(objects);
-            currentOBJSColliding = util.agentsColliding;
 
+            currentOBJSColliding.Clear();
+            util.currentColliding.ForEach(x =>
+            {
+                currentOBJSColliding.Add(x.GetPairAsString());
+            });
+            
+            colliderXPairs.Clear();
             util.Xpairs.ForEach(x =>
             {
                 colliderXPairs.Add(x.GetPairAsString());
             });
 
+            colliderYPairs.Clear();
             util.Ypairs.ForEach(x =>
             {
                 colliderYPairs.Add(x.GetPairAsString());
             });
 
+            colliderZPairs.Clear();
             util.Zpairs.ForEach(x =>
             {
                 colliderZPairs.Add(x.GetPairAsString());
