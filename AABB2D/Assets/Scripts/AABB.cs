@@ -125,31 +125,47 @@ namespace Trent
 
     public class ColliderSystem
     {
-        private List<aaBB> XaxisList = new List<aaBB>();
-        private List<aaBB> YaxisList = new List<aaBB>();
-        private List<aaBB> ZaxisList = new List<aaBB>();
+        private List<aaBB> XaxisList;
+        private List<aaBB> YaxisList;
+        private List<aaBB> ZaxisList;
 
-        public List<ColPair> Xpairs = new List<ColPair>();
-        public List<ColPair> Ypairs = new List<ColPair>();
-        public List<ColPair> Zpairs = new List<ColPair>();
+        public List<ColPair> Xpairs;
+        public List<ColPair> Ypairs;
+        public List<ColPair> Zpairs;
 
-        public List<ColPair> possibleCollision = new List<ColPair>();
-        public List<ColPair> currentColliding = new List<ColPair>();
+        private List<ColPair> possibleCollision;
+        public List<ColPair> currentColliding;
+
+        public ColliderSystem()
+        {
+            XaxisList = new List<aaBB>();
+            YaxisList = new List<aaBB>();
+            ZaxisList = new List<aaBB>();
+
+            Xpairs = new List<ColPair>();
+            Ypairs = new List<ColPair>();
+            Zpairs = new List<ColPair>();
+
+            possibleCollision = new List<ColPair>();
+            currentColliding = new List<ColPair>();
+        }
 
         public bool TestOverLap(aaBB col1, aaBB col2)
         {
             var d1x = col2.Min.x - col1.Max.x;
             var d1y = col2.Min.y - col1.Max.y;
+            var d1z = col2.Min.z - col1.Max.z;
 
             var d2x = col1.Min.x - col2.Max.x;
             var d2y = col1.Min.y - col2.Max.y;
+            var d2z = col1.Min.z - col2.Max.z;
 
-            if (d1x > 0 || d1y > 0)
+            if (d1x > 0 || d1y > 0 || d1z > 0)
             {
                 return false;
             }
 
-            if (d2x > 0 || d2y > 0)
+            if (d2x > 0 || d2y > 0 || d2z > 0)
             {
                 return false;
             }
@@ -178,7 +194,13 @@ namespace Trent
                     if (Xpairs[i].ComparePair(Ypairs[j]) == true)
                     {
                         //ADD THIS PAIR TO THE POSSIBLECOLLISION LIST
-                        possibleCollision.Add(Xpairs[i]);
+                        if(TestOverLap(Xpairs[i].GetPair()[0], Xpairs[i].GetPair()[1]) == true)
+                        {
+                            if(possibleCollision.Contains(Xpairs[i]) == false)
+                            {
+                                possibleCollision.Add(Xpairs[i]);
+                            }
+                        }
                     }
                 }
             }
@@ -191,11 +213,14 @@ namespace Trent
                 {
                     if (Zpairs[i].ComparePair(possibleCollision[j]) == true)
                     {
-                        var pair = Zpairs[i];
-
-                        if(currentColliding.Contains(pair) == false)
+                        if(TestOverLap(Zpairs[i].GetPair()[0], Zpairs[i].GetPair()[1]))
                         {
-                            currentColliding.Add(pair); //ADD PAIR TO CURRENTCOLLIDING
+                            var pair = Zpairs[i];
+
+                            if (currentColliding.Contains(pair) == false)
+                            {
+                                currentColliding.Add(pair); //ADD PAIR TO CURRENTCOLLIDING
+                            }
                         }
                     }
                 }
