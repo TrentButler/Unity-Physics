@@ -8,52 +8,6 @@ namespace Trent
     [System.Serializable]
     public class aaBB : ScriptableObject
     {
-        public void _Init(int id, Vector3 position, float size)
-        {
-            //XMIN = POSITION.X -= SIZE
-            //XMAX = POSITION.X += SIZE
-            //YMIN = POSITION.Y -= SIZE
-            //YMAX = POSITION.Y += SIZE
-
-            _id = id;
-            _position = position;
-            _size = size;
-            min.x = position.x - size;
-            min.y = position.y - size;
-            min.z = position.z - size;
-
-            max.x = position.x + size;
-            max.y = position.y + size;
-            max.z = position.z + size;
-        }
-
-        public void _Update(Vector3 position)
-        {
-            _position = position;
-
-            min.x = position.x - Size;
-            min.y = position.y - Size;
-            min.z = position.z - Size;
-
-            max.x = position.x + Size;
-            max.y = position.y + Size;
-            max.z = position.z + Size;
-        }
-        //CHANGE THE FLOAT VALUE TO AN VECTOR3
-        public void _Update(Vector3 position, float size)
-        {
-            _position = position;
-            _size = size;
-
-            min.x = position.x - Size;
-            min.y = position.y - Size;
-            min.z = position.z - Size;
-
-            max.x = position.x + Size;
-            max.y = position.y + Size;
-            max.z = position.z + Size;
-        }
-
         public int Id { get { return _id; } }
         private int _id;
 
@@ -66,8 +20,56 @@ namespace Trent
         public Vector3 Max { get { return max; } }
         private Vector3 max;
 
-        public float Size { get { return _size; } }
-        private float _size;
+        public Vector3 Scale { get { return _scale; } }
+        private Vector3 _scale;
+
+        public void _Init(int id, Vector3 position, Vector3 scale)
+        {
+            //XMIN = POSITION.X -= SIZE
+            //XMAX = POSITION.X += SIZE
+            //YMIN = POSITION.Y -= SIZE
+            //YMAX = POSITION.Y += SIZE
+            
+            _id = id;
+            _position = position;
+            _scale = scale;
+            min.x = position.x - scale.x;
+            min.y = position.y - scale.y;
+            min.z = position.z - scale.z;
+
+            max.x = position.x + scale.x;
+            max.y = position.y + scale.y;
+            max.z = position.z + scale.z;
+        }
+
+        public void _Update(Vector3 position)
+        {
+            _position = position;
+
+            min.x = position.x - Scale.x;
+            min.y = position.y - Scale.y;
+            min.z = position.z - Scale.z;
+
+            max.x = position.x + Scale.x;
+            max.y = position.y + Scale.y;
+            max.z = position.z + Scale.z;
+        }
+        public void _Update(Vector3 position, Vector3 size)
+        {
+            _position = position;
+            _scale = size;
+
+            min.x = position.x - Scale.x;
+            min.y = position.y - Scale.y;
+            min.z = position.z - Scale.z;
+
+            max.x = position.x + Scale.x;
+            max.y = position.y + Scale.y;
+            max.z = position.z + Scale.z;
+        }
+
+        public delegate void CollisionResolution(aaBB other);
+        public CollisionResolution resolution;
     }
 
     public class ColPair
@@ -147,6 +149,7 @@ namespace Trent
         public List<ColPair> Ypairs;
         public List<ColPair> Zpairs;
 
+        public List<aaBB> activeList;
         private List<ColPair> possibleCollision;
         public List<ColPair> currentColliding;
 
@@ -185,6 +188,18 @@ namespace Trent
             }
 
             return true;
+        }
+
+        public void ResolveCollision()
+        {
+            for(int i = 0; i < currentColliding.Count; i++)
+            {
+                var col1 = currentColliding[i].GetPair()[0];
+                var col2 = currentColliding[i].GetPair()[1];
+
+                col1.resolution.Invoke(col2);
+                col2.resolution.Invoke(col1);
+            }
         }
 
         //NEEDS WORK
@@ -255,7 +270,7 @@ namespace Trent
             YaxisList = sortedY; //STORE THE SORTED OBJECTS
             ZaxisList = sortedZ; //STORE THE SORTED OBJECTS
 
-            List<aaBB> activeList = new List<aaBB>(); //CREATE A NEW LIST OF AABB
+            activeList = new List<aaBB>(); //CREATE A NEW LIST OF AABB
 
             #region XSortAndSweep
             for (int i = 0; i < XaxisList.Count - 1; i++)
@@ -349,8 +364,6 @@ namespace Trent
                 }
             }
             #endregion
-
-            TestCollision();
         }
     }
 }

@@ -8,8 +8,8 @@ namespace Trent
     public class DebugCubeBehaviour : MonoBehaviour
     {
         private aaBB col;
-        public float size;
-        public List<ParticleBehaviour> objectsInScene;
+        public Vector3 size;
+        public List<ParticleBehaviour> objectsInScene; //THIS IS A NO NO. COLLECT AN LIST OF 'aaBB' INSTEAD
         private ColliderSystem colSystem;
         
         void Start()
@@ -17,7 +17,7 @@ namespace Trent
             colSystem = new ColliderSystem();
             objectsInScene = GameObject.FindObjectsOfType<ParticleBehaviour>().ToList();
             col = ScriptableObject.CreateInstance<aaBB>() as aaBB;
-            col._Init(99, transform.position, size);
+            col._Init(-98, transform.position, size);
         }
 
         void FixedUpdate()
@@ -29,7 +29,9 @@ namespace Trent
             {
                 if(colSystem.TestOverLap(col, x._collider) == true)
                 {
-                    x.isKinematic = true;
+                    var vel = x.particle.Velocity;
+                    x.particle.AddForce(-vel);
+                    //x.isKinematic = true;
                 }
 
                 else
@@ -41,19 +43,17 @@ namespace Trent
 
         private void LateUpdate()
         {
-            Vector3 modelScale = new Vector3(size * 2, size * 2, size * 2);
-
-            transform.localScale = modelScale;
+            transform.localScale = col.Scale;
             
-            var bl = new Vector3(col.Min.x, col.Min.y);
-            var tr = new Vector3(col.Max.x, col.Max.y);
-            var tl = new Vector3(col.Min.x, col.Max.y);
-            var br = new Vector3(col.Max.x, col.Min.y);
+            //var bl = new Vector3(col.Min.x, col.Min.y);
+            //var tr = new Vector3(col.Max.x, col.Max.y);
+            //var tl = new Vector3(col.Min.x, col.Max.y);
+            //var br = new Vector3(col.Max.x, col.Min.y);
 
-            Debug.DrawLine(bl, br);
-            Debug.DrawLine(bl, tl);
-            Debug.DrawLine(tl, tr);
-            Debug.DrawLine(br, tr);
+            //Debug.DrawLine(bl, br);
+            //Debug.DrawLine(bl, tl);
+            //Debug.DrawLine(tl, tr);
+            //Debug.DrawLine(br, tr);
         }
     }
 }

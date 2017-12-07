@@ -11,9 +11,30 @@ namespace Trent
         public Particle particle;
         public bool isKinematic = false;
         public aaBB _collider;
+
+        private void colresolution(aaBB other)
+        {
+            if(other.Id == -99) //CURSOR ID
+            {
+                //CHANGE COLOR
+                Debug.Log("COLLISION WITH CURSOR");
+                GetComponentInChildren<MeshRenderer>().material.color = Color.red;
+            }
+        }
         
+        private void Start()
+        {
+            _collider.resolution += colresolution;
+            //Debug.Log("START METHOD @ PARTICLE BEHAVIOUR");
+        }
+
         void FixedUpdate()
         {
+            if(_collider.resolution == null)
+            {
+                _collider.resolution += colresolution;
+            }
+
             if(isKinematic == false)
             {
                 transform.position = particle.Update(Time.fixedDeltaTime);                

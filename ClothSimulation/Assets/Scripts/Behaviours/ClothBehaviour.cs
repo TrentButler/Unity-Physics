@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 namespace Trent
 {
+    //NEEDS WORK
+    //IMPLEMENT AERODYNAMIC FORCES
     public class ClothBehaviour : MonoBehaviour
     {
         public int Rows = 2;
@@ -13,19 +15,17 @@ namespace Trent
         public float Mass = 1.0f;
         public float offset = 1.0f;
         public bool useGravity = false;
+        public bool isActive = true;
 
         public float springConstant = 1.0f;
         public float dampingFactor = 1.0f;
         public float restLength = 1.0f;
+        public Vector3 colScale;
 
         public GameObject model;
         public List<GameObject> GOs;
         public List<Particle> particles;
         public List<SpringDamper> dampers;
-        public List<aaBB> colliders;
-        
-        //COLLIDERSYSTEMBEHAVIOUR?
-        //private ColliderSystem colSystem;
 
         private Vector3 gravity()
         {
@@ -37,8 +37,6 @@ namespace Trent
             GOs = new List<GameObject>();
             particles = new List<Particle>();
             dampers = new List<SpringDamper>();
-            colliders = new List<aaBB>();
-            //colSystem = new ColliderSystem();
 
             #region Generate Grid
             int colCount = 0;
@@ -50,15 +48,14 @@ namespace Trent
                     //-PARTICLE
                     //-MODEL
 
-                    Particle p = new Particle(new Vector3(r * offset, 0, c * offset), new Vector3(0, 0.1f, 0), Mass); //CREATE INSTANCE OF PARTICLE
-                    
+                    Particle p = new Particle(new Vector3(r * offset, c * offset, 0), new Vector3(0, 0.1f, 0), Mass); //CREATE INSTANCE OF PARTICLE
+
                     var go = new GameObject();
                     go.AddComponent<ParticleBehaviour>();
                     go.GetComponent<ParticleBehaviour>().particle = p;
 
                     var col = ScriptableObject.CreateInstance<aaBB>() as aaBB;
-                    col._Init(colCount, go.transform.position, offset);
-                    
+                    col._Init(colCount, go.transform.position, colScale);
                     go.GetComponent<ParticleBehaviour>()._collider = col;
 
                     var m = Instantiate(model, go.transform.position, go.transform.rotation);
@@ -66,7 +63,6 @@ namespace Trent
 
                     particles.Add(p);
                     GOs.Add(go);
-                    colliders.Add(col);
                 }
             }
             #endregion
@@ -100,7 +96,7 @@ namespace Trent
 
                 if (i + Columns > (Rows * Columns) - 1)
                 {
-                   //GOs[i].GetComponent<ParticleBehaviour>().isKinematic = true;
+                    //GOs[i].GetComponent<ParticleBehaviour>().isKinematic = true;
                     continue; //TOP OF GRID CHECK
                 }
 
@@ -140,12 +136,12 @@ namespace Trent
             //DIAGONALLY UP LEFT
             for (int i = 0; i < Rows * Columns; i++)
             {
-                if(i == 0)
+                if (i == 0)
                 {
                     continue; //SKIP THIS PARTICLE
                 }
 
-                if(i % Columns == 0)
+                if (i % Columns == 0)
                 {
                     continue; //SKIP THIS PARTICLE
                 }
@@ -156,7 +152,7 @@ namespace Trent
                 {
                     continue; //TOP OF GRID CHECK
                 }
-                
+
                 var p1 = particles[i];
                 var p2 = particles[second];
 
@@ -168,14 +164,6 @@ namespace Trent
 
         void FixedUpdate()
         {
-            particles.ForEach(x =>
-            {
-                colliders.ForEach(c =>
-                {
-                    c._Update(x.Position, offset);
-                });
-            });
-
             dampers.ForEach(x =>
             {
                 Debug.DrawLine(x.One.Position, x.Two.Position, Color.green);
@@ -184,13 +172,16 @@ namespace Trent
                 x.Kd = dampingFactor;
                 x.Lo = restLength;
 
-                if(useGravity == true)
+                if (isActive == true)
                 {
-                    x.One.AddForce(gravity());
-                    x.Two.AddForce(gravity());
-                }
+                    if (useGravity == true)
+                    {
+                        x.One.AddForce(gravity());
+                        x.Two.AddForce(gravity());
+                    }
 
-                x.CalculateForces();
+                    x.CalculateForces();
+                }
             });
         }
     }
