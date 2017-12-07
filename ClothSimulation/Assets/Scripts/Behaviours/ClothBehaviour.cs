@@ -22,6 +22,10 @@ namespace Trent
         public List<GameObject> GOs;
         public List<Particle> particles;
         public List<SpringDamper> dampers;
+        public List<aaBB> colliders;
+        
+        //COLLIDERSYSTEMBEHAVIOUR?
+        //private ColliderSystem colSystem;
 
         private Vector3 gravity()
         {
@@ -33,8 +37,11 @@ namespace Trent
             GOs = new List<GameObject>();
             particles = new List<Particle>();
             dampers = new List<SpringDamper>();
+            colliders = new List<aaBB>();
+            //colSystem = new ColliderSystem();
 
             #region Generate Grid
+            int colCount = 0;
             for (int c = 0; c < Columns; c++)
             {
                 for (int r = 0; r < Rows; r++)
@@ -43,16 +50,23 @@ namespace Trent
                     //-PARTICLE
                     //-MODEL
 
-                    Particle p = new Particle(new Vector3(r * offset, c * offset, 0), new Vector3(0, 0.1f, 0), Mass); //CREATE INSTANCE OF PARTICLE
+                    Particle p = new Particle(new Vector3(r * offset, 0, c * offset), new Vector3(0, 0.1f, 0), Mass); //CREATE INSTANCE OF PARTICLE
+                    
                     var go = new GameObject();
                     go.AddComponent<ParticleBehaviour>();
                     go.GetComponent<ParticleBehaviour>().particle = p;
+
+                    var col = ScriptableObject.CreateInstance<aaBB>() as aaBB;
+                    col._Init(colCount, go.transform.position, offset);
                     
+                    go.GetComponent<ParticleBehaviour>()._collider = col;
+
                     var m = Instantiate(model, go.transform.position, go.transform.rotation);
                     m.transform.SetParent(go.transform);
 
                     particles.Add(p);
                     GOs.Add(go);
+                    colliders.Add(col);
                 }
             }
             #endregion
@@ -154,6 +168,14 @@ namespace Trent
 
         void FixedUpdate()
         {
+            particles.ForEach(x =>
+            {
+                colliders.ForEach(c =>
+                {
+                    c._Update(x.Position, offset);
+                });
+            });
+
             dampers.ForEach(x =>
             {
                 Debug.DrawLine(x.One.Position, x.Two.Position, Color.green);
