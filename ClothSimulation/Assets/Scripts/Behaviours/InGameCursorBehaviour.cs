@@ -10,8 +10,9 @@ namespace Trent
         public GameObject cursorModel;
         public Vector3 cursorOffset;
         public float cursorSpeed;
+        public float clickDragCoefficient;
 
-        private Vector3 cursorWorldPosition;
+        public Vector3 cursorWorldPosition;
         private GameObject cursorGO;
 
         //FOR COLLISION

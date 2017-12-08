@@ -8,6 +8,7 @@ namespace Trent
 {
     //NEEDS WORK
     //IMPLEMENT AERODYNAMIC FORCES
+    //IMPLEMENT APPLICATION UI
     public class ClothBehaviour : MonoBehaviour
     {
         public int Rows = 2;
@@ -19,7 +20,7 @@ namespace Trent
 
         public float springConstant = 1.0f;
         public float dampingFactor = 1.0f;
-        public float restLength = 1.0f;
+        public float tearFactor;
         public Vector3 colScale;
 
         public GameObject model;
@@ -84,7 +85,7 @@ namespace Trent
                 var p1 = particles[i];
                 var p2 = particles[second];
 
-                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, restLength);
+                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, tearFactor);
                 dampers.Add(springDamper);
                 xIncrementor++;
             }
@@ -103,7 +104,7 @@ namespace Trent
                 var p1 = particles[i];
                 var p2 = particles[second];
 
-                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, restLength);
+                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, tearFactor);
                 dampers.Add(springDamper);
             }
 
@@ -128,7 +129,7 @@ namespace Trent
                 var p1 = particles[i];
                 var p2 = particles[second];
 
-                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, restLength);
+                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, tearFactor);
                 dampers.Add(springDamper);
                 xIncrementor++;
             }
@@ -156,7 +157,7 @@ namespace Trent
                 var p1 = particles[i];
                 var p2 = particles[second];
 
-                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, restLength);
+                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, tearFactor);
                 dampers.Add(springDamper);
             }
             #endregion
@@ -164,25 +165,38 @@ namespace Trent
 
         void FixedUpdate()
         {
-            dampers.ForEach(x =>
+            for(int i = 0; i < dampers.Count; i++)
             {
-                Debug.DrawLine(x.One.Position, x.Two.Position, Color.green);
+                if (dampers[i] == null)
+                {
+                    continue;
+                }
 
-                x.Ks = springConstant;
-                x.Kd = dampingFactor;
-                x.Lo = restLength;
+                dampers[i].TestDamperTear();
+
+                if (dampers[i].isBroken)
+                {
+                    //DELETE THIS DAMPER
+                    dampers.Remove(dampers[i]);
+                    dampers[i] = null;
+                }
+
+                Debug.DrawLine(dampers[i].One.Position, dampers[i].Two.Position, Color.green);
+
+                dampers[i].Ks = springConstant;
+                dampers[i].Kd = dampingFactor;
 
                 if (isActive == true)
                 {
                     if (useGravity == true)
                     {
-                        x.One.AddForce(gravity());
-                        x.Two.AddForce(gravity());
+                        dampers[i].One.AddForce(gravity());
+                        dampers[i].Two.AddForce(gravity());
                     }
 
-                    x.CalculateForces();
+                    dampers[i].CalculateForces();
                 }
-            });
+            }
         }
     }
 }

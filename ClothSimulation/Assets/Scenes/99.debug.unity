@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4514284, g: 0.5008003, b: 0.5716813, a: 1}
+  m_IndirectSpecularColor: {r: 0.45142806, g: 0.50079983, b: 0.5716806, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -122,12 +122,12 @@ GameObject:
   - component: {fileID: 507835380}
   - component: {fileID: 507835381}
   m_Layer: 0
-  m_Name: DebugCube
+  m_Name: DebugPlane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &507835380
 Transform:
   m_ObjectHideFlags: 0
@@ -135,7 +135,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 507835379}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2, z: 0}
+  m_LocalPosition: {x: 0, y: -20, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1143170664}
@@ -150,11 +150,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 507835379}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e9799333e70be045a936d4ecf7995ae, type: 3}
+  m_Script: {fileID: 11500000, guid: f06db4dc2273f594bb32b85cf36cee14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: {x: 10, y: 0.01, z: 10}
-  objectsInScene: []
+  col: {fileID: 0}
+  size: {x: 100, y: 1, z: 100}
 --- !u!1 &605195152
 GameObject:
   m_ObjectHideFlags: 0
@@ -178,7 +178,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 605195152}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.0009813, y: 1.2116652, z: -3.8749104}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -201,10 +201,10 @@ MonoBehaviour:
   offset: 1
   useGravity: 0
   isActive: 0
-  springConstant: 1
+  springConstant: 2
   dampingFactor: 10
-  restLength: 1
-  colScale: {x: 1, y: 1, z: 1}
+  tearFactor: 5
+  colScale: {x: 0.5, y: 0.5, z: 0.5}
   model: {fileID: 1109166365772056, guid: 2a92eb6b802ae1e4a92f748e02ec22a9, type: 2}
   GOs: []
   particles: []
@@ -313,9 +313,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fa654787fc99fb42a54400f9716091f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collisionCheckTimer: 2
+  collisionCheckTimer: 4
   colliders: []
-  showColliders: 0
+  showColliders: 1
   timer: 0
 --- !u!1 &1143170663
 GameObject:
@@ -471,13 +471,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1936979850}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.24, y: 0, z: -10}
+  m_LocalRotation: {x: 0, y: -0.08715578, z: 0, w: 0.9961947}
+  m_LocalPosition: {x: 5, y: 5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -10, z: 0}
 --- !u!114 &1936979856
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -508,6 +508,8 @@ MonoBehaviour:
     type: 2}
   cursorOffset: {x: 0, y: 0, z: 5.5}
   cursorSpeed: 2
-  cursorColScale: {x: 0.5, y: 0.5, z: 0.5}
+  clickDragCoefficient: 100
+  cursorWorldPosition: {x: 0, y: 0, z: 0}
+  cursorColScale: {x: 0.3, y: 0.3, z: 0.3}
   col: {fileID: 0}
   showCollider: 0

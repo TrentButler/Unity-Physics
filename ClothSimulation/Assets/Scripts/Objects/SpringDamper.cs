@@ -14,6 +14,8 @@ namespace Trent
         public float Ks; //SPRING CONSTANT
         public float Kd; //DAMPING FACTOR
         public float Lo; //RESTING LENGTH
+        public float damperTearCoefficent;
+        public bool isBroken;
 
         public SpringDamper()
         {
@@ -22,14 +24,19 @@ namespace Trent
             Ks = 0;
             Kd = 0;
             Lo = 0;
+            damperTearCoefficent = 0;
+            isBroken = false;
+
         }
-        public SpringDamper(Particle p1, Particle p2, float sC, float dF, float rL)
+        public SpringDamper(Particle p1, Particle p2, float sC, float dF, float tC)
         {
             one = p1;
             two = p2;
             Ks = sC;
             Kd = dF;
-            Lo = rL;
+            Lo = Vector3.Distance(p1.Position, p2.Position);
+            damperTearCoefficent = tC;
+            isBroken = false;
         }        
         
         public void CalculateForces()
@@ -51,6 +58,16 @@ namespace Trent
 
             one.AddForce(force);
             two.AddForce(-force);
+        }
+
+        public void TestDamperTear()
+        {
+            var dist = Vector3.Distance(two.Position, one.Position);
+            if(dist > damperTearCoefficent)
+            {
+                //DELETE THIS SPRING DAMPER
+                isBroken = true;
+            }
         }
     }
 }

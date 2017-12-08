@@ -7,7 +7,6 @@ namespace Trent
     [System.Serializable]
     public class Particle
     {
-        
         private float mass;
         private Vector3 force;
         private Vector3 acceleration;
@@ -15,6 +14,8 @@ namespace Trent
         private Vector3 velocity;
         [SerializeField]
         private Vector3 position;
+
+        public bool isKinematic = false;
 
         #region Propteries
         public Vector3 Position { get { return position; } }
@@ -47,9 +48,23 @@ namespace Trent
         {
             acceleration = force / mass;
             velocity += acceleration * deltaTime;
-            velocity = Vector3.ClampMagnitude(velocity, 10);
             position += velocity * deltaTime;
+            force = Vector3.zero;
             return position;
+        }
+        public Vector3 Update(Vector3 pos)
+        {
+            position = pos;
+            return position;
+        }
+
+        public void ZeroForces()
+        {
+            force = Vector3.zero;
+        }
+        public void ZeroVelocity()
+        {
+            velocity = Vector3.zero;
         }
     }
 }
