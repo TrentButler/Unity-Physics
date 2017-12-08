@@ -1,13 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 
 namespace Trent
 {
-    //NEEDS WORK
-    //IMPLEMENT AERODYNAMIC FORCES
     //IMPLEMENT APPLICATION UI
     public class ClothBehaviour : MonoBehaviour
     {
@@ -15,18 +12,27 @@ namespace Trent
         public int Columns = 2;
         public float Mass = 1.0f;
         public float offset = 1.0f;
-        public bool useGravity = false;
-        public bool isActive = true;
+        public Vector3 colScale;
+        public bool showSpringDampers = false;
 
         public float springConstant = 1.0f;
         public float dampingFactor = 1.0f;
-        public float tearFactor;
-        public Vector3 colScale;
+        public float tearCoefficient;
+
+        public bool useGravity = false;
+        public bool isActive = true;
+        public bool windActive = false;
+
+        public float windDragCoefficient;
+        public float airDensity;
+        public Vector3 WindDirection;
 
         public GameObject model;
         public List<GameObject> GOs;
         public List<Particle> particles;
         public List<SpringDamper> dampers;
+
+        private Aerodynamics aero;
 
         private Vector3 gravity()
         {
@@ -35,6 +41,7 @@ namespace Trent
 
         void Start()
         {
+            aero = new Aerodynamics(windDragCoefficient, airDensity, WindDirection);
             GOs = new List<GameObject>();
             particles = new List<Particle>();
             dampers = new List<SpringDamper>();
@@ -85,7 +92,7 @@ namespace Trent
                 var p1 = particles[i];
                 var p2 = particles[second];
 
-                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, tearFactor);
+                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, tearCoefficient);
                 dampers.Add(springDamper);
                 xIncrementor++;
             }
@@ -104,7 +111,7 @@ namespace Trent
                 var p1 = particles[i];
                 var p2 = particles[second];
 
-                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, tearFactor);
+                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, tearCoefficient);
                 dampers.Add(springDamper);
             }
 
@@ -129,7 +136,7 @@ namespace Trent
                 var p1 = particles[i];
                 var p2 = particles[second];
 
-                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, tearFactor);
+                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, tearCoefficient);
                 dampers.Add(springDamper);
                 xIncrementor++;
             }
@@ -157,7 +164,7 @@ namespace Trent
                 var p1 = particles[i];
                 var p2 = particles[second];
 
-                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, tearFactor);
+                var springDamper = new SpringDamper(p1, p2, springConstant, dampingFactor, tearCoefficient);
                 dampers.Add(springDamper);
             }
             #endregion
@@ -173,21 +180,23 @@ namespace Trent
                 }
 
                 dampers[i].TestDamperTear();
-
                 if (dampers[i].isBroken)
                 {
                     //DELETE THIS DAMPER
                     dampers.Remove(dampers[i]);
                     dampers[i] = null;
                 }
-
-                Debug.DrawLine(dampers[i].One.Position, dampers[i].Two.Position, Color.green);
-
-                dampers[i].Ks = springConstant;
-                dampers[i].Kd = dampingFactor;
-
+                
                 if (isActive == true)
                 {
+                    if(dampers[i] == null)
+                    {
+                        continue;
+                    }
+
+                    dampers[i].Ks = springConstant;
+                    dampers[i].Kd = dampingFactor;
+
                     if (useGravity == true)
                     {
                         dampers[i].One.AddForce(gravity());
@@ -196,6 +205,89 @@ namespace Trent
 
                     dampers[i].CalculateForces();
                 }
+            }
+            
+            if (isActive)
+            {
+                if(windActive)
+                {
+                    aero.UpdateAerodynamics(windDragCoefficient, airDensity, WindDirection); //UPDATE THE AERODYNAMICS OBJECT
+
+                    //FORWARD 
+                    int xIncrementor = 1;
+                    for (int i = 0; i < particles.Count; i++)
+                    {
+                        if (i + Columns > (Rows * Columns) - 1)
+                        {
+                            continue; //TOP OF GRID CHECK
+                        }
+
+                        if (xIncrementor == Rows)
+                        {
+                            xIncrementor = 1; //RESET THE INCREMENTOR
+                            continue;
+                        }
+
+                        var one = particles[i];
+                        var two = particles[i + 1];
+                        var three = particles[i + Columns];
+
+                        List<Particle> tri = new List<Particle> { one, two, three };
+                        aero.CalculateForces(tri);
+
+                        xIncrementor++;
+                    }
+
+                    //REVERSE
+                    xIncrementor = 1;
+                    int count = 1;
+                    for (int i = 0; i < particles.Count; i++)
+                    {
+                        if(count <= Rows)
+                        {
+                            count++;
+                            continue;
+                        }
+
+                        if (xIncrementor == Rows)
+                        {
+                            xIncrementor = 1; //RESET THE INCREMENTOR
+                            continue;
+                        }
+
+                        var one = particles[i];
+                        var two = particles[i + 1];
+                        var three = particles[i - Columns];
+
+                        List<Particle> tri = new List<Particle> { one, two, three };
+                        aero.CalculateForces(tri);
+
+                        xIncrementor++;
+                    }
+                }
+            }
+
+            else
+            {
+                particles.ForEach(x =>
+                {
+                    x.ZeroForces();
+                    x.ZeroVelocity();
+                });
+            }
+        }
+
+        private void LateUpdate()
+        {
+            if (showSpringDampers)
+            {
+                dampers.ForEach(x =>
+                {
+                    if(x != null)
+                    {
+                        Debug.DrawLine(x.One.Position, x.Two.Position, Color.green);
+                    }
+                });
             }
         }
     }

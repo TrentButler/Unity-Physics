@@ -8,12 +8,10 @@ namespace Trent
 {
     public class ColliderSystemBehaviour : MonoBehaviour
     {
-        public float collisionCheckTimer;
         public List<aaBB> colliders;
         public bool showColliders = false;
 
         private ColliderSystem colSystem;
-        public float timer;
 
         private InGameCursorBehaviour cursor;
         private DebugPlaneBehaviour floor;
@@ -22,8 +20,7 @@ namespace Trent
         {
             cursor = GameObject.FindObjectOfType<InGameCursorBehaviour>();
             floor = GameObject.FindObjectOfType<DebugPlaneBehaviour>();
-
-            timer = 0.0f;
+            
             colSystem = new ColliderSystem(); //INTILIZE THE COLLIDERSYSTEM OBJECT
 
             //COLLECT ALL COLLIDERS IN THE SCENE
@@ -49,18 +46,10 @@ namespace Trent
                 if (colSystem.TestOverLap(cursor.col, agent._collider))
                 {
                     agent.isColliding = true;
-
                     agent._collider.resolution.Invoke(cursor.col);
 
                     if (Input.GetMouseButton(0))
                     {
-                        //get the mouse delta
-                        //var deltaX = Input.GetAxis("Mouse X");
-                        //var deltaY = Input.GetAxis("Mouse Y");
-
-                        //Vector3 translation = new Vector3(deltaX * cursor.clickDragCoefficient, deltaY * cursor.clickDragCoefficient, 0);
-
-                        //agent.particle.AddForce(translation);
                         agent.particle.Update(cursor.cursorWorldPosition);
                     }
 
@@ -73,16 +62,12 @@ namespace Trent
                     {
                         agent.particle.isKinematic = false;
                     }
-
-                    //Debug.Log("CURSOR COLLIDE WITH PARTICLE");
                 }
 
                 if (colSystem.TestOverLap(floor.col, agent._collider))
                 {
                     agent.isColliding = true;
                     agent._collider.resolution.Invoke(floor.col);
-
-                    Debug.Log("FLOOR COLLIDE WITH PARTICLE");
                 }
 
                 else
@@ -111,15 +96,6 @@ namespace Trent
                     //Debug.DrawLine(br, tr);
                 }
             }
-
-            //timer += Time.fixedDeltaTime;
-            //if (timer >= collisionCheckTimer)
-            //{
-            //    timer = 0.0f;
-            //    colSystem.SortandSweep(colliders);
-            //    colSystem.TestCollision();
-            //    colSystem.ResolveCollision();
-            //}
         }
     }
 }

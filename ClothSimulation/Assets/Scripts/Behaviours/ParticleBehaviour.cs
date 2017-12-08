@@ -18,23 +18,21 @@ namespace Trent
         {
             if (other.Id == -99) //CURSOR ID
             {
-                isColliding = true;
-
                 //CHANGE COLOR
-                var rend = GetComponentInChildren<Renderer>().material.color = Color.red;
-                Debug.Log("COLLISION WITH CURSOR");
+                //var rend = GetComponentInChildren<Renderer>().material.color = Color.red;
             }
 
+            //NEEDS WORK
             if (other.Id == -98) //FLOOR COLLIDER ID
             {
-                isColliding = true;
+                //isColliding = true;
 
-                var oldPos = particle.Position;
-                oldPos.y = other.Position.y;
+                //var oldPos = particle.Position;
+                //oldPos.y = other.Position.y;
 
-                particle.Update(oldPos);
+                //particle.Update(oldPos);
 
-                var rend = GetComponentInChildren<Renderer>().material.color = Color.green;
+                //var rend = GetComponentInChildren<Renderer>().material.color = Color.green;
             }
         }
 
@@ -51,18 +49,11 @@ namespace Trent
             {
                 _collider.resolution += colresolution;
             }
-
-            if (isColliding == false)
-            {
-                GetComponentInChildren<MeshRenderer>().material.color = Color.white;
-            }
-
+            
             if (particle.isKinematic == false)
             {
                 transform.position = particle.Update(Time.fixedDeltaTime);
-
-                //CHANGE THE COLOR TO WHITE
-                //GetComponentInChildren<MeshRenderer>().material.color = Color.white;
+                GetComponentInChildren<MeshRenderer>().material.color = Color.white;
             }
 
             if (particle.isKinematic == true)
@@ -71,7 +62,7 @@ namespace Trent
                 particle.ZeroVelocity();
 
                 //CHANGE THE COLOR TO RED
-                //GetComponentInChildren<MeshRenderer>().material.color = Color.red;
+                GetComponentInChildren<MeshRenderer>().material.color = Color.black;
             }
         }
 
