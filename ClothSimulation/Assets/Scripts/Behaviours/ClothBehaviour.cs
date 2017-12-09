@@ -34,6 +34,43 @@ namespace Trent
 
         private Aerodynamics aero;
 
+        public void ToggleGravity()
+        {
+            if (useGravity == true)
+            {
+                useGravity = false;
+            }
+
+            else
+            {
+                useGravity = true;
+            }
+        }
+        public void ToggleClothActive()
+        {
+            if (isActive == true)
+            {
+                isActive = false;
+            }
+
+            else
+            {
+                isActive = true;
+            }
+        }
+        public void ToggleWind()
+        {
+            if (windActive == true)
+            {
+                windActive = false;
+            }
+
+            else
+            {
+                windActive = true;
+            }
+        }
+
         private Vector3 gravity()
         {
             return new Vector3(0, -9.81f, 0);
