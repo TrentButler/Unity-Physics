@@ -2328,7 +2328,9 @@ MonoBehaviour:
 
     Middle Click(Hold) ~> Move camera
 
-    Scroll Wheel ~> Move camera forward / back'
+    Scroll Wheel ~> Move camera forward / back
+
+    Spacebar ~> Reset camera'
 --- !u!114 &114833609330048818
 MonoBehaviour:
   m_ObjectHideFlags: 1
