@@ -79,7 +79,6 @@ namespace Trent
             return force;
         }
 
-
         //NEEDS WORK
         private void Bounds()
         {

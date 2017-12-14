@@ -24,25 +24,7 @@ namespace Trent
 
         private bool perching;
         #endregion
-
-        private List<Boid> neighbors;
-
-        public void AddNeighbor(Boid b)
-        {
-            if (neighbors.Contains(b) == false)
-            {
-                neighbors.Add(b);
-            }
-        }
-
-        public void RemoveNeighbor(Boid b)
-        {
-            if (neighbors.Contains(b) == true)
-            {
-                neighbors.Remove(b);
-            }
-        }
-
+       
         public void SetPerching(bool isPerching)
         {
             perching = isPerching;
@@ -67,8 +49,6 @@ namespace Trent
         {
             //NEEDS WORK
             //INITILIZE THE AGENT
-
-            neighbors = new List<Boid>();
 
             mass = Mass;
             max_speed = maxSpeed;

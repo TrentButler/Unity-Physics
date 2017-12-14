@@ -13,48 +13,7 @@ namespace Trent
         public List<Agent> activeAgents;
         public List<GameObject> activeObjects;
         public GameObject Mesh;
-
-        public void Create()
-        {
-            //MAKE A BOID
-
-            var go = new GameObject(); //CREATE AN EMPTY GAMEOBJECT,
-            //var boid = new Boid(); //CREATE AN BOID OBJECT
-            var boid = ScriptableObject.CreateInstance<Boid>(); //CREATE AN BOID OBJECT
-
-            activeAgents.Add(boid); //STORE THE BOID
-            activeObjects.Add(go); //STORE THE GAMEOBJECT
-
-            var rb = go.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                Destroy(rb);
-            }
-
-            //go.name = string.Format("{0} {1} {2}", "BOID(", activeObjects.Count, ")"); //NAME THE GAMEOBJECT
-            go.name = "BOID";
-            go.AddComponent<BaseAgentBehaviour>();
-
-            if (Mesh == null)
-            {
-                var mesh = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                var col = mesh.GetComponent<BoxCollider>();
-                Destroy(col);
-                mesh.transform.SetParent(go.transform, false);
-            }
-
-            if (Mesh != null)
-            {
-                var prefab = GameObject.Instantiate(Mesh, go.transform.position, go.transform.rotation);
-                prefab.transform.SetParent(go.transform, false);
-            }
-
-            var behaviour = go.GetComponent<AgentBehaviour>();
-            behaviour.setAgent(boid);
-
-            boid.Initalize(go.transform, 1, 2); //INITILIZE THE BOID OBJECT
-        }
-
+        
         //USE THIS ONE
         public void Create(int count)
         {
