@@ -133,6 +133,15 @@ namespace Trent
             {
                 windButton.GetComponentInChildren<Text>().text = "Wind ON";
             }
+
+            if (cloth.isActive == false)
+            {
+                clothActiveButton.GetComponentInChildren<Text>().text = "Cloth OFF";
+            }
+            if (cloth.isActive == true)
+            {
+                clothActiveButton.GetComponentInChildren<Text>().text = "Cloth ON";
+            }
         }
 
         void FixedUpdate()
