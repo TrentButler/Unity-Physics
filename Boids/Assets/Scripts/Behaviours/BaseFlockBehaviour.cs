@@ -188,18 +188,5 @@ namespace Trent
                 }
             }
         }
-
-        private void LateUpdate()
-        {
-            var agentGameObjects = GameObject.FindObjectsOfType<BaseAgentBehaviour>().ToList(); //GET ALL GAMEOBJECTS WITH A A 'BOIDBEHAVIOUR'
-            var agents = GameObject.FindObjectsOfType<Boid>().ToList();
-
-            for (int i = 0; i < agentGameObjects.Count; i++)
-            {
-                agentGameObjects[i].transform.position = agents[i].Position;
-                //CHANGE THE MESH'S HEADING
-                agentGameObjects[i].transform.forward = agents[i].Velocity.normalized;
-            }
-        }
     }
 }

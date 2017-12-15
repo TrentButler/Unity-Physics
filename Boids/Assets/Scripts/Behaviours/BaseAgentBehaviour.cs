@@ -18,5 +18,12 @@ namespace Trent
                 agent = a;
             }
         }
+
+        private void LateUpdate()
+        {
+            var a = agent as Boid;
+            transform.position = a.Position;
+            transform.forward = a.Velocity.normalized;
+        }
     }
 }
