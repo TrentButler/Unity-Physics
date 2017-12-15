@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace Trent
 {
@@ -36,6 +37,11 @@ namespace Trent
             {
                 active = true;
             }
+        }
+        
+        public void Restart()
+        {
+            SceneManager.LoadScene("99.debug", LoadSceneMode.Single);
         }
 
         void Start()
